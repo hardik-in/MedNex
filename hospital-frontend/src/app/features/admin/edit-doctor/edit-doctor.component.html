@@ -1,0 +1,122 @@
+<h2>Edit Doctor</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="doctor-form">
+  <h3>Personal Information</h3>
+
+  <div class="form-row">
+    <label>First Name</label>
+    <input type="text" formControlName="firstName" />
+  </div>
+
+  <div class="form-row">
+    <label>Last Name</label>
+    <input type="text" formControlName="lastName" />
+  </div>
+
+  <div class="form-row">
+    <label>Email</label>
+    <input type="email" formControlName="email" />
+  </div>
+
+  <div class="form-row">
+    <label>Phone Number</label>
+    <input type="text" formControlName="phoneNumber" />
+  </div>
+
+  <div class="form-row">
+    <label>Address</label>
+    <input type="text" formControlName="address" />
+  </div>
+
+  <h3>Professional Information</h3>
+
+  <div class="form-row">
+    <label>Specialization</label>
+    <input type="text" formControlName="specialization" />
+  </div>
+
+  <div class="form-row">
+    <label>License Number</label>
+    <input type="text" formControlName="licenseNumber" />
+  </div>
+
+  <div class="form-row">
+    <label>Years of Experience</label>
+    <input type="number" formControlName="yearsOfExperience" />
+  </div>
+
+  <div class="form-row">
+    <label>Qualifications</label>
+    <input type="text" formControlName="qualifications" />
+  </div>
+
+  <div class="form-row">
+    <label>Consultation Fee</label>
+    <input type="number" formControlName="consultationFee" />
+  </div>
+
+  <div class="form-row">
+    <label>Bio</label>
+    <textarea formControlName="bio"></textarea>
+  </div>
+
+  <h3>Admin Assignment</h3>
+
+  <div class="form-row">
+    <label>Assigned Admin</label>
+    <div class="admin-assignment">
+      <span *ngIf="selectedAdmin; else noAdmin">
+        {{ selectedAdmin.firstName }} {{ selectedAdmin.lastName }}
+        <small>({{ selectedAdmin.employeeId }})</small>
+      </span>
+      <ng-template #noAdmin>
+        <span class="no-admin">No admin assigned</span>
+      </ng-template>
+      <button type="button" (click)="openAdminPopup()">Change Admin</button>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="form.invalid">Update Doctor</button>
+    <button type="button" (click)="router.navigate(['/admin/doctors'])">
+      Cancel
+    </button>
+  </div>
+</form>
+
+<!-- Admin Selection Popup -->
+<div class="popup-overlay" *ngIf="showAdminPopup" (click)="closeAdminPopup()">
+  <div class="popup" (click)="$event.stopPropagation()">
+    <div class="popup-header">
+      <h3>Select Admin</h3>
+      <button type="button" class="popup-close" (click)="closeAdminPopup()">
+        ✕
+      </button>
+    </div>
+
+    <input
+      type="text"
+      class="popup-search"
+      placeholder="Search by name or employee ID..."
+      [(ngModel)]="adminSearch"
+      (input)="onAdminSearch()"
+    />
+
+    <div class="popup-list">
+      <div
+        *ngFor="let admin of filteredAdmins"
+        class="popup-item"
+        (click)="selectAdmin(admin)"
+      >
+        <span class="popup-item-name"
+          >{{ admin.firstName }} {{ admin.lastName }}</span
+        >
+        <span class="popup-item-id">{{ admin.employeeId }}</span>
+      </div>
+
+      <div *ngIf="filteredAdmins.length === 0" class="popup-empty">
+        No admins found.
+      </div>
+    </div>
+  </div>
+</div>

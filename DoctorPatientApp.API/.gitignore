@@ -1,0 +1,13 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# SECRETS - never commit
+appsettings.Development.json
+appsettings.Production.json
+
+# Logs
+*.log

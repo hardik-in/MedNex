@@ -1,0 +1,39 @@
+<h2>Book Appointment</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>Doctor</label>
+  <select formControlName="doctorId" (change)="loadSlots()">
+    <option [ngValue]="null">Select</option>
+    <option *ngFor="let d of doctors" [ngValue]="d.id">
+      {{ d.name }} ({{ d.specialization }})
+    </option>
+  </select>
+
+  <label>Date</label>
+  <input type="date" formControlName="appointmentDate" (change)="loadSlots()" />
+
+  <label>Time Slot</label>
+
+  <div *ngIf="loadingSlots">Loading slots...</div>
+
+  <select formControlName="timeSlotId">
+    <option [ngValue]="null">Select slot</option>
+
+    <option *ngFor="let s of slots" [ngValue]="s.timeSlotId">
+      {{ s.startTime }} - {{ s.endTime }}
+    </option>
+  </select>
+  <p>Selected Slot: {{ form.value.timeSlotId }}</p>
+
+  <div *ngIf="!loadingSlots && slots.length === 0">No slots available</div>
+
+  <label>Reason</label>
+  <input type="text" formControlName="reason" />
+
+  <label>Notes</label>
+  <input type="text" formControlName="notes" />
+
+  <button type="submit" [disabled]="booking || form.invalid">
+    {{ booking ? "Booking..." : "Book" }}
+  </button>
+</form>

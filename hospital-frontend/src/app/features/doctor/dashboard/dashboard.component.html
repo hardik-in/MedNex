@@ -1,0 +1,66 @@
+<div class="appointments-container">
+  <div class="header-section">
+    <h2>Patient Appointments</h2>
+    <p class="subtitle">Manage your daily schedule and patient visits</p>
+  </div>
+
+  <div *ngIf="loading" class="state-container">
+    <div class="spinner"></div>
+    <p>Retrieving appointment data...</p>
+  </div>
+
+  <div *ngIf="!loading && appointments.length === 0" class="state-container empty">
+    <p>No appointments found for this period.</p>
+  </div>
+
+  <table *ngIf="!loading && appointments.length > 0" class="hms-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Patient Name</th>
+        <th>Time Slot</th>
+        <th>Reason/Notes</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of appointments">
+        <td class="bold-text">{{ a.appointmentDate | date:'mediumDate' }}</td>
+        
+        <td>
+          <div class="patient-info">
+            <span class="name">{{ a.patientName }}</span>
+            <span class="id">ID: #{{ a.patientId }}</span>
+          </div>
+        </td>
+
+        <td>{{ a.startTime }} - {{ a.endTime }}</td>
+
+        <td>
+          <div class="reason-cell" [title]="a.notes">
+            {{ a.reason }}
+          </div>
+        </td>
+
+        <td>
+          <span class="status-badge" [ngClass]="getStatusClass(a.status)">
+            {{ getStatusText(a.status) }}
+          </span>
+        </td>
+
+        <td>
+          <div class="action-buttons" *ngIf="a.status === 0">
+            <button class="btn-complete" (click)="updateStatus(a.id, 1)" title="Mark as Complete">
+              Complete
+            </button>
+            <button class="btn-cancel" (click)="updateStatus(a.id, 2)" title="Cancel Appointment">
+              Cancel
+            </button>
+          </div>
+          <span *ngIf="a.status !== 0" class="text-muted">No actions</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

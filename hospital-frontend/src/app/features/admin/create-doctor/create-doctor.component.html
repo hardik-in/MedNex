@@ -1,0 +1,214 @@
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Admin — Doctors</span>
+      <h1 class="page-title">Create Doctor</h1>
+    </div>
+    <a routerLink="/admin/doctors" class="btn-back">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 12H5M12 5l-7 7 7 7" />
+      </svg>
+      Back to Doctors
+    </a>
+  </div>
+
+  <!-- Form Card -->
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-card">
+    <!-- Section: Personal Info -->
+    <div class="form-section">
+      <div class="section-label">Personal Information</div>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>First Name</label>
+          <input type="text" formControlName="firstName" placeholder="John" />
+        </div>
+
+        <div class="input-group">
+          <label>Last Name</label>
+          <input type="text" formControlName="lastName" placeholder="Smith" />
+        </div>
+
+        <div class="input-group">
+          <label>Email Address</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="doctor@hospital.org"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Phone Number</label>
+          <input
+            type="tel"
+            formControlName="phoneNumber"
+            placeholder="+91 98765 43210"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Date of Birth</label>
+          <input type="date" formControlName="dateOfBirth" />
+        </div>
+
+        <div class="input-group">
+          <label>Gender</label>
+          <select formControlName="gender">
+            <option value="" disabled selected>Select gender</option>
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+            <option value="2">Other</option>
+          </select>
+        </div>
+
+        <div class="input-group full-width">
+          <label>Address</label>
+          <input
+            type="text"
+            formControlName="address"
+            placeholder="123 Hospital Road, City"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Professional Info -->
+    <div class="form-section">
+      <div class="section-label">Professional Details</div>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>License Number</label>
+          <input
+            type="text"
+            formControlName="licenseNumber"
+            placeholder="LIC-0000000"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Specialization</label>
+          <input
+            type="text"
+            formControlName="specialization"
+            placeholder="Cardiology"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Qualifications</label>
+          <input
+            type="text"
+            formControlName="qualifications"
+            placeholder="MBBS, MD"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Years of Experience</label>
+          <input
+            type="number"
+            formControlName="yearsOfExperience"
+            placeholder="0"
+            min="0"
+          />
+        </div>
+
+        <div class="input-group">
+          <label>Consultation Fee (₹)</label>
+          <input
+            type="number"
+            formControlName="consultationFee"
+            placeholder="500"
+            min="0"
+          />
+        </div>
+
+        <div class="input-group full-width">
+          <label>Bio</label>
+          <textarea
+            formControlName="bio"
+            rows="3"
+            placeholder="Brief professional summary..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Account -->
+    <div class="form-section">
+      <div class="section-label">Account Setup</div>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Password</label>
+          <div class="password-container">
+            <input
+              [type]="passwordVisible ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+            />
+            <button type="button" class="eye-btn" (click)="togglePassword()">
+              <svg
+                *ngIf="passwordVisible"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <svg
+                *ngIf="!passwordVisible"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                <path
+                  d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                />
+                <path
+                  d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                />
+                <line x1="2" y1="2" x2="22" y2="22" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <p *ngIf="error" class="error-msg">{{ error }}</p>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <a routerLink="/admin/doctors" class="btn-cancel">Cancel</a>
+      <button type="submit" class="btn-submit" [disabled]="loading">
+        {{ loading ? "Creating..." : "Create Doctor" }}
+      </button>
+    </div>
+  </form>
+</div>

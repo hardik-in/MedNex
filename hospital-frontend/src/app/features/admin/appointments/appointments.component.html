@@ -1,0 +1,23 @@
+<h2>All Appointments</h2>
+
+<div *ngIf="loading">Loading appointments...</div>
+
+<table *ngIf="!loading && appointments.length > 0">
+  <tr>
+    <th>Patient</th>
+    <th>Doctor</th>
+    <th>Date</th>
+    <th>Slot</th>
+    <th>Status</th>
+  </tr>
+
+  <tr *ngFor="let a of appointments">
+    <td>{{ a.patientName }}</td>
+    <td>{{ a.doctorName }}</td>
+    <td>{{ a.appointmentDate | date }}</td>
+    <td>{{ a.startTime }} - {{ a.endTime }}</td>
+    <td>{{ a.status }}</td>
+  </tr>
+</table>
+
+<div *ngIf="!loading && appointments.length === 0">No appointments found</div>

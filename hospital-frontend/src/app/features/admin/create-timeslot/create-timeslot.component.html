@@ -1,0 +1,29 @@
+<h2>Create Time Slots</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>Doctor</label>
+
+  <select formControlName="doctorId">
+    <option value="">Select Doctor</option>
+
+    <option *ngFor="let d of doctors" [value]="d.id">
+      {{ d.name }} ({{ d.specialization }})
+    </option>
+  </select>
+
+  <label>Date</label>
+  <input type="date" formControlName="date" />
+
+  <label>Start Time</label>
+  <input type="time" formControlName="startTime" />
+
+  <label>End Time</label>
+  <input type="time" formControlName="endTime" />
+
+  <label>Slot Duration (minutes)</label>
+  <input type="number" formControlName="durationMinutes" />
+
+  <button type="submit" [disabled]="creating || form.invalid">
+    {{ creating ? "Creating..." : "Create Slots" }}
+  </button>
+</form>

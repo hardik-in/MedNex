@@ -1,0 +1,662 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+
+/* ── Variables ───────────────────────────────────── */
+:host {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --border: #e1e8f0;
+  --border-soft: #edf2f7;
+  --accent: #4b9fe1;
+  --accent-dark: #2f7bc8;
+  --accent-soft: rgba(75, 159, 225, 0.1);
+  --accent-glow: rgba(75, 159, 225, 0.2);
+  --text-1: #1a2b4a;
+  --text-2: #4a6080;
+  --text-3: #94a8c0;
+  --danger: #e05c6a;
+  --radius: 14px;
+  --radius-sm: 10px;
+  display: block;
+  height: 100vh;
+  font-family: "DM Sans", sans-serif;
+}
+
+/* ── Wrapper ─────────────────────────────────────── */
+.login-wrapper {
+  display: flex;
+  height: 100vh;
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Top accent line over right panel */
+.login-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 62%;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+  z-index: 10;
+}
+
+/* ── Left Panel ──────────────────────────────────── */
+.left-panel {
+  flex: 0 0 62%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(145deg, #1a3a6e 0%, #2a5fa8 50%, #4b9fe1 100%);
+}
+
+/* Glow behind stethoscope */
+.left-panel::after {
+  content: "";
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    ellipse,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Left Content ────────────────────────────────── */
+.left-content {
+  position: relative;
+  z-index: 2;
+  padding: 44px 48px;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* ── Brand Row ───────────────────────────────────── */
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.brand-icon {
+  width: 52px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.heartbeat-svg {
+  overflow: visible;
+  width: 52px;
+  height: 28px;
+}
+
+.heartbeat-line {
+  fill: none;
+  stroke: #e05c6a;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 40 160;
+  stroke-dashoffset: 200;
+  animation: heartbeat-scroll 3.2s linear infinite;
+}
+
+@keyframes heartbeat-scroll {
+  0% {
+    stroke-dashoffset: 200;
+  }
+  100% {
+    stroke-dashoffset: -200;
+  }
+}
+
+.brand-name {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 35px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+/* ── Theme Toggle ────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Centre Art ──────────────────────────────────── */
+.centre-art {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
+}
+
+/* ── Stethoscope ─────────────────────────────────── */
+.stethoscope-art {
+  position: absolute;
+  right: -200px;
+  top: 40px;
+  width: 240px;
+  height: auto;
+  opacity: 0.18;
+  pointer-events: none;
+  filter: brightness(0) invert(1);
+  mix-blend-mode: screen;
+  transform: rotate(10deg);
+}
+
+/* ── ECG Art ─────────────────────────────────────── */
+.ecg-art {
+  width: 100%;
+  height: 40px;
+  overflow: visible;
+}
+
+.ecg-line {
+  fill: none;
+  stroke: rgba(224, 92, 106, 0.65);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 50 600;
+  stroke-dashoffset: 650;
+  animation: ecg-scroll 4s linear infinite;
+}
+
+@keyframes ecg-scroll {
+  0% {
+    stroke-dashoffset: 650;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -650;
+    opacity: 0;
+  }
+}
+
+/* ── Left Headline ───────────────────────────────── */
+.left-headline h1 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(36px, 4vw, 54px);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 16px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.left-headline p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 300;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 360px;
+}
+
+/* ── Stat Grid ───────────────────────────────────── */
+.stat-grid {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  backdrop-filter: blur(8px);
+  transition: background 0.2s;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.stat-value {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
+/* ── Decorative Grid ─────────────────────────────── */
+.grid-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.grid-line {
+  border-right: 1px solid #fff;
+  height: 100%;
+}
+
+/* ── Right Panel ─────────────────────────────────── */
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  padding: 40px 48px;
+  position: relative;
+}
+
+.right-panel::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(to top, rgba(75, 159, 225, 0.03), transparent);
+  pointer-events: none;
+}
+
+/* ── Login Card ──────────────────────────────────── */
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ──────────────────────────────────────── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.header::before {
+  content: "MEDNEX — HOSPITAL MANAGEMENT";
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.header h2 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-3);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* ── Input Groups ────────────────────────────────── */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.input-group input::placeholder {
+  color: var(--text-3);
+}
+
+.input-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow);
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Password Container ──────────────────────────── */
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-container input {
+  padding-right: 48px;
+  width: 100%;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.eye-btn:hover {
+  color: var(--accent);
+}
+
+/* ── Submit Button ───────────────────────────────── */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  margin-top: 4px;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(75, 159, 225, 0.4);
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Error Message ───────────────────────────────── */
+.error-msg {
+  font-size: 13px;
+  color: var(--danger);
+  text-align: center;
+  margin: 0;
+  padding: 11px 16px;
+  background: rgba(224, 92, 106, 0.06);
+  border: 1px solid rgba(224, 92, 106, 0.2);
+  border-radius: var(--radius-sm);
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+/* ── Dark Theme ──────────────────────────────────── */
+:host-context(body.dark) {
+  --bg: #0e1117;
+  --surface: #161b27;
+  --border: #252d40;
+  --border-soft: #1e2636;
+  --accent: #4f7ef8;
+  --accent-dark: #3a6be0;
+  --accent-soft: rgba(79, 126, 248, 0.1);
+  --accent-glow: rgba(79, 126, 248, 0.2);
+  --text-1: #e2e8f4;
+  --text-2: #7e8fb5;
+  --text-3: #445070;
+  --danger: #e05c6a;
+}
+
+:host-context(body.dark) .left-panel {
+  background: linear-gradient(145deg, #0a0e1a 0%, #0e1525 50%, #111d35 100%);
+}
+
+:host-context(body.dark) .left-panel::after {
+  background: radial-gradient(
+    ellipse,
+    rgba(79, 126, 248, 0.06) 0%,
+    transparent 70%
+  );
+}
+
+:host-context(body.dark) .stat-card {
+  background: rgba(79, 126, 248, 0.07);
+  border-color: rgba(79, 126, 248, 0.18);
+}
+
+:host-context(body.dark) .stat-card:hover {
+  background: rgba(79, 126, 248, 0.12);
+}
+
+:host-context(body.dark) .theme-toggle {
+  background: rgba(79, 126, 248, 0.1);
+  border-color: rgba(79, 126, 248, 0.25);
+  color: #7e8fb5;
+}
+
+:host-context(body.dark) .theme-toggle:hover {
+  border-color: #4f7ef8;
+  color: #4f7ef8;
+}
+
+:host-context(body.dark) .right-panel {
+  background: #161b27;
+  border-left-color: #252d40;
+}
+
+:host-context(body.dark) .right-panel::after {
+  background: linear-gradient(to top, rgba(79, 126, 248, 0.04), transparent);
+}
+
+:host-context(body.dark) .input-group input {
+  background: #111520;
+  border-color: #252d40;
+  color: #e2e8f4;
+}
+
+:host-context(body.dark) .input-group input:focus {
+  background: #1c2333;
+  border-color: #4f7ef8;
+}
+
+:host-context(body.dark) .login-wrapper::before {
+  background: linear-gradient(90deg, #3a6be0, #4f7ef8);
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .left-panel {
+    display: none;
+  }
+  .login-wrapper::before {
+    left: 0;
+  }
+
+  .right-panel {
+    border-left: none;
+    padding: 40px 24px;
+  }
+
+  .login-card {
+    max-width: 100%;
+  }
+}
+/* ── Full Width ECG Lines ─────────────────────────── */
+.fullwidth-ecg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 30px;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.top-ecg {
+  top: 80px;
+}
+
+.bottom-ecg {
+  top: auto;
+  bottom: 40px;
+}
+
+.fullwidth-ecg svg {
+  width: 100%;
+  height: 30px;
+}
+
+.fw-ecg-line {
+  fill: none;
+  stroke: rgba(45, 212, 191, 0.45);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 80 1200;
+  stroke-dashoffset: 1280;
+  animation: fw-ecg-scroll 5s linear infinite;
+}
+
+.bottom-ecg .fw-ecg-line {
+  animation: fw-ecg-scroll 8s linear infinite;
+  animation-delay: 0s;
+  stroke: rgba(2, 121, 71, 0.5);
+}
+
+@keyframes fw-ecg-scroll {
+  0% {
+    stroke-dashoffset: 1280;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -1280;
+    opacity: 0;
+  }
+}

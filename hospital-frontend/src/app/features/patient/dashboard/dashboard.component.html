@@ -1,0 +1,54 @@
+<div class="appointments-container">
+  <h2>My Appointments</h2>
+
+  <div *ngIf="loading" class="state-container">
+    <div class="spinner"></div>
+    <p>Loading your medical schedule...</p>
+  </div>
+
+  <div *ngIf="!loading && appointments.length === 0" class="state-container empty">
+    <p>No appointments scheduled yet.</p>
+  </div>
+
+  <table *ngIf="!loading && appointments.length > 0" class="hms-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Doctor</th>
+        <th>Specialization</th>
+        <th>Time Slot</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of appointments">
+        <td>{{ a.appointmentDate | date: "mediumDate" }}</td>
+
+        <td>
+          <span class="doctor-name">Dr. {{ a.doctorName }}</span>
+        </td>
+        
+        <td>{{ a.doctorSpecialization }}</td>
+
+        <td>{{ a.startTime }} - {{ a.endTime }}</td>
+
+        <td>
+          <span class="status-badge" [ngClass]="getStatusClass(a.status)">
+            {{ getStatusText(a.status) }}
+          </span>
+        </td>
+
+        <td>
+          <button 
+            *ngIf="a.status === 0" 
+            class="btn-cancel" 
+            (click)="cancel(a.id)">
+            Cancel
+          </button>
+          <span *ngIf="a.status !== 0">-</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

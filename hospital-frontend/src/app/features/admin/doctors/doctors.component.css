@@ -1,0 +1,442 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+
+/* ── Variables ───────────────────────────────────── */
+:host {
+  --bg: #f0f4f8;
+  --bg-subtle: #edf2f7;
+  --surface: #ffffff;
+  --surface-2: #f7fafc;
+  --border: #e1e8f0;
+  --border-soft: #edf2f7;
+  --accent: #4b9fe1;
+  --accent-dark: #2f7bc8;
+  --accent-soft: rgba(75, 159, 225, 0.1);
+  --accent-glow: rgba(75, 159, 225, 0.2);
+  --text-1: #1a2b4a;
+  --text-2: #4a6080;
+  --text-3: #94a8c0;
+  --danger: #e05c6a;
+  --danger-soft: rgba(224, 92, 106, 0.08);
+  --teal: #38b2ac;
+  --radius: 14px;
+  --radius-sm: 10px;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--text-1);
+}
+
+/* ── Wrapper ─────────────────────────────────────── */
+.page-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+/* ── Header ──────────────────────────────────────── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 36px;
+  gap: 16px;
+}
+
+.page-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+  font-family: "DM Sans", sans-serif;
+}
+
+.page-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* ── Primary Button ──────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 22px;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(75, 159, 225, 0.35);
+}
+
+/* ── Table Container ─────────────────────────────── */
+.table-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(26, 43, 74, 0.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* ── Table Head ──────────────────────────────────── */
+thead tr {
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  padding: 13px 16px;
+  text-align: left;
+  font-family: "DM Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* ── Table Body ──────────────────────────────────── */
+tbody tr {
+  border-bottom: 1px solid var(--border-soft);
+  transition: background 0.15s;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: var(--surface-2);
+}
+
+td {
+  padding: 14px 16px;
+  color: var(--text-1);
+  vertical-align: middle;
+}
+
+.text-muted {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+/* ── Doctor Name Link ────────────────────────────── */
+.doctor-link {
+  color: var(--text-1);
+  text-decoration: none;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  transition: color 0.15s;
+}
+
+.doctor-link:hover {
+  color: var(--accent);
+}
+
+/* ── License Badge ───────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--text-2);
+  font-family: monospace;
+  letter-spacing: 0.04em;
+}
+
+/* ── Admin Tag ───────────────────────────────────── */
+.admin-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(75, 159, 225, 0.2);
+  border-radius: 20px;
+  font-size: 11px;
+  color: var(--accent-dark);
+  font-weight: 600;
+  font-family: "DM Sans", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* ── Action Buttons ──────────────────────────────── */
+.action-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-family: "DM Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-2);
+}
+
+.btn-edit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.btn-delete {
+  background: transparent;
+  border-color: var(--border-soft);
+  color: var(--text-3);
+}
+
+.btn-delete:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* ── Loading State ───────────────────────────────── */
+.loading-state {
+  padding: 60px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+/* ── Confirm Popup ───────────────────────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.15s ease;
+}
+
+.confirm-popup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  max-width: 380px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  animation: slideUp 0.2s ease;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(26, 43, 74, 0.15);
+}
+
+.confirm-popup::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--danger), transparent);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.confirm-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  border: 1px solid rgba(224, 92, 106, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--danger);
+  margin-bottom: 4px;
+}
+
+.confirm-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.confirm-message {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
+}
+
+.confirm-message strong {
+  color: var(--text-1);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 600;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.confirm-cancel,
+.confirm-delete {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-cancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.confirm-cancel:hover {
+  border-color: var(--text-2);
+  color: var(--text-1);
+}
+
+.confirm-delete {
+  background: var(--danger);
+  border: 1px solid var(--danger);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-weight: 700;
+}
+
+.confirm-delete:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(224, 92, 106, 0.35);
+}
+
+/* ── Animations ──────────────────────────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 28px 16px 60px;
+  }
+  .table-container {
+    overflow-x: auto;
+  }
+  table {
+    min-width: 700px;
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── Dark Theme ──────────────────────────────────── */
+:host-context(body.dark) {
+  --bg: #0e1117;
+  --bg-subtle: #111520;
+  --surface: #161b27;
+  --surface-2: #1c2333;
+  --border: #252d40;
+  --border-soft: #1e2636;
+  --accent: #4f7ef8;
+  --accent-dark: #3a6be0;
+  --accent-soft: rgba(79, 126, 248, 0.1);
+  --accent-glow: rgba(79, 126, 248, 0.2);
+  --text-1: #e2e8f4;
+  --text-2: #7e8fb5;
+  --text-3: #445070;
+  --danger: #e05c6a;
+  --danger-soft: rgba(224, 92, 106, 0.08);
+  --teal: #2dd4bf;
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+:host-context(body.dark) .table-container {
+  box-shadow: none;
+}
+
+:host-context(body.dark) .confirm-popup {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+:host-context(body.dark) tbody tr:hover {
+  background: #1c2333;
+}
+
+:host-context(body.dark) .admin-tag {
+  color: var(--accent);
+}

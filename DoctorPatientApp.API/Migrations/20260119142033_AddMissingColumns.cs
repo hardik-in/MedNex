@@ -1,0 +1,99 @@
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace DoctorPatientApp.API.Migrations
+{
+    /// <inheritdoc />
+    public partial class AddMissingColumns : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "UserRole",
+                table: "Users");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "Users",
+                type: "varchar(100)",
+                maxLength: 100,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "varchar(50)",
+                oldMaxLength: 50)
+                .Annotation("MySql:CharSet", "utf8mb4")
+                .OldAnnotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "Users",
+                type: "varchar(100)",
+                maxLength: 100,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "varchar(50)",
+                oldMaxLength: 50)
+                .Annotation("MySql:CharSet", "utf8mb4")
+                .OldAnnotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.AddColumn<bool>(
+                name: "IsActive",
+                table: "Users",
+                type: "tinyint(1)",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<int>(
+                name: "Role",
+                table: "Users",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropColumn(
+                name: "IsActive",
+                table: "Users");
+
+            migrationBuilder.DropColumn(
+                name: "Role",
+                table: "Users");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "LastName",
+                table: "Users",
+                type: "varchar(50)",
+                maxLength: 50,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "varchar(100)",
+                oldMaxLength: 100)
+                .Annotation("MySql:CharSet", "utf8mb4")
+                .OldAnnotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "FirstName",
+                table: "Users",
+                type: "varchar(50)",
+                maxLength: 50,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "varchar(100)",
+                oldMaxLength: 100)
+                .Annotation("MySql:CharSet", "utf8mb4")
+                .OldAnnotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.AddColumn<string>(
+                name: "UserRole",
+                table: "Users",
+                type: "longtext",
+                nullable: false)
+                .Annotation("MySql:CharSet", "utf8mb4");
+        }
+    }
+}

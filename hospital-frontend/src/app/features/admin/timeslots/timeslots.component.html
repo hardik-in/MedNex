@@ -1,0 +1,36 @@
+<p>timeslots works!</p>
+<h2>Manage Time Slots</h2>
+
+<label>Select Doctor</label>
+
+<select #doctorSelect (change)="loadSlots(+doctorSelect.value)">
+  <option value="">Select doctor</option>
+
+  <option *ngFor="let d of doctors" [value]="d.id">
+    {{ d.name }} ({{ d.specialization }})
+  </option>
+</select>
+
+<table *ngIf="slots.length > 0">
+  <tr>
+    <th>Date</th>
+    <th>Start</th>
+    <th>End</th>
+    <th>Status</th>
+    <th>Action</th>
+  </tr>
+
+  <tr *ngFor="let s of slots">
+    <td>{{ s.date | date }}</td>
+
+    <td>{{ s.startTime }}</td>
+
+    <td>{{ s.endTime }}</td>
+
+    <td>{{ s.status }}</td>
+
+    <td>
+      <button (click)="deleteSlot(s.id)">Delete</button>
+    </td>
+  </tr>
+</table>

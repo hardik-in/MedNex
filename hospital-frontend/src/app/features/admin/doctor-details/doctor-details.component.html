@@ -1,0 +1,40 @@
+<h2>Doctor Profile</h2>
+
+<div *ngIf="doctor">
+  <h3>{{ doctor.firstName }} {{ doctor.lastName }}</h3>
+
+  <p><b>Email:</b> {{ doctor.email }}</p>
+  <p><b>Phone:</b> {{ doctor.phoneNumber }}</p>
+  <p><b>License:</b> {{ doctor.licenseNumber }}</p>
+  <p><b>Specialization:</b> {{ doctor.specialization }}</p>
+  <p><b>Experience:</b> {{ doctor.yearsOfExperience }} years</p>
+  <p><b>Consultation Fee:</b> ₹{{ doctor.consultationFee }}</p>
+  <p><b>Assigned Admin:</b> {{ doctor.assignedAdminName }}</p>
+</div>
+
+<hr />
+
+<h3>Patients / Appointments</h3>
+
+<table>
+  <tr>
+    <th>Patient</th>
+    <th>Last Visit</th>
+    <th>Time</th>
+    <th>Status</th>
+  </tr>
+
+  <tr *ngFor="let p of patients">
+    <td>
+      <a [routerLink]="['/admin/patients', p.patientId]">
+        {{ p.patientName }}
+      </a>
+    </td>
+
+    <td>{{ p.lastAppointmentDate | date }}</td>
+    <td>{{ p.startTime }} - {{ p.endTime }}</td>
+    <td>{{ p.status }}</td>
+  </tr>
+</table>
+
+<div *ngIf="appointments.length === 0">No appointments yet</div>

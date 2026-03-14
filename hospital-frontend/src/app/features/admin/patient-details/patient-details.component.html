@@ -1,0 +1,38 @@
+<h2>Patient Profile</h2>
+
+<div *ngIf="patient">
+  <p><b>Name:</b> {{ patient.firstName }} {{ patient.lastName }}</p>
+  <p><b>Email:</b> {{ patient.email }}</p>
+  <p><b>Phone:</b> {{ patient.phoneNumber }}</p>
+  <p><b>Date of Birth:</b> {{ patient.dateOfBirth }}</p>
+  <p><b>Address:</b> {{ patient.address }}</p>
+</div>
+
+<hr />
+
+<h3>Appointment History</h3>
+
+<table *ngIf="appointments.length > 0">
+  <tr>
+    <th>Date</th>
+    <th>Doctor</th>
+    <th>Time</th>
+    <th>Status</th>
+  </tr>
+
+  <tr *ngFor="let a of appointments">
+    <td>{{ a.appointmentDate | date }}</td>
+    <td>{{ a.doctorName }}</td>
+    <td>{{ a.startTime }} - {{ a.endTime }}</td>
+    <td>{{ a.status }}</td>
+  </tr>
+</table>
+
+<hr />
+
+<h3>Medical Records</h3>
+
+<div *ngFor="let m of medicalRecords">
+  <p><b>Diagnosis:</b> {{ m.diagnosis }}</p>
+  <p><b>Notes:</b> {{ m.notes }}</p>
+</div>
