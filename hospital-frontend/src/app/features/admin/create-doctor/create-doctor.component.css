@@ -354,3 +354,109 @@
 :host-context(body.dark) .select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23445070' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
 }
+/* ── Required Star ───────────────────────────────── */
+.required-star {
+  color: var(--danger);
+  margin-left: 2px;
+}
+
+/* ── Field Error ─────────────────────────────────── */
+.field-error {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--danger);
+  letter-spacing: 0.02em;
+}
+
+/* ── Error state on inputs ───────────────────────── */
+input.input-error,
+select.input-error,
+textarea.input-error,
+.phone-row.input-error {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+.password-container.input-error input {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+/* ── Phone Row ───────────────────────────────────── */
+.phone-row {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden; /* back on — needed for even corners */
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.phone-row:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.phone-row.input-error {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-soft) !important;
+}
+
+.country-code-select {
+  width: 72px !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+  border-right: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  background: var(--surface-2) !important;
+  padding: 0 8px !important;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: none !important;
+  color: var(--text-1);
+  /* remove the default select arrow to save space */
+  background-image: none !important;
+  text-align: center;
+}
+
+.input-group .phone-row .phone-input {
+  flex: 1 1 0% !important;
+  width: 0 !important;
+  min-width: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  background: var(--bg) !important;
+  box-shadow: none !important;
+  outline: none;
+  padding: 11px 14px;
+  color: var(--text-1);
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+}
+
+.input-group .phone-row .phone-input::placeholder {
+  color: var(--text-3);
+}
+
+/* ── Dark ────────────────────────────────────────── */
+:host-context(body.dark) .phone-row {
+  border-color: #252d40;
+}
+
+:host-context(body.dark) .phone-row:focus-within {
+  border-color: #4f7ef8;
+}
+
+:host-context(body.dark) .country-code-select {
+  background: #161b27 !important;
+  border-right-color: #252d40 !important;
+  color: #e2e8f4;
+}
+
+:host-context(body.dark) .input-group .phone-row .phone-input {
+  background: #111520 !important;
+  color: #e2e8f4;
+}

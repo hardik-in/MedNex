@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminAppointmentsService } from '../admin-appointments.service';
 import { RouterModule } from '@angular/router';
+import { inject } from '@angular/core';
+import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
   selector: 'app-admin-doctors',
@@ -23,7 +25,7 @@ export class DoctorsComponent implements OnInit {
     private service: AdminAppointmentsService,
     private fb: FormBuilder,
   ) {}
-
+  private toast = inject(ToastService);
   form = this.fb.group({
     firstName: ['', Validators.required],
     lastName: ['', Validators.required],
@@ -104,9 +106,17 @@ export class DoctorsComponent implements OnInit {
 
   deleteDoctor() {
     if (!this.doctorToDelete) return;
-    this.service.deleteDoctor(this.doctorToDelete.id).subscribe(() => {
-      this.doctorToDelete = null;
-      this.loadDoctors();
+    const name = this.doctorToDelete.name;
+    this.service.deleteDoctor(this.doctorToDelete.id).subscribe({
+      next: () => {
+        this.doctorToDelete = null;
+        this.toast.danger(`${name} has been deleted.`);
+        this.loadDoctors();
+      },
+      error: (err) => {
+        this.doctorToDelete = null;
+        this.toast.error(err?.error?.message || 'Failed to delete doctor.');
+      },
     });
   }
 }

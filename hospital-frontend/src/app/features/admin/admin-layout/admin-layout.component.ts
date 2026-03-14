@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, StoredUser } from '../../../core/auth/auth.service';
 import { ThemeService } from '../../../core/theme.service';
+import { ToastComponent } from '../../../core/toast/toast/toast.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ToastComponent],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.css',
 })

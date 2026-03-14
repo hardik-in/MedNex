@@ -30,55 +30,183 @@
       <div class="section-label">Personal Information</div>
       <div class="form-grid">
         <div class="input-group">
-          <label>First Name</label>
-          <input type="text" formControlName="firstName" placeholder="John" />
+          <label>First Name <span class="required-star">*</span></label>
+          <input
+            type="text"
+            formControlName="firstName"
+            placeholder="John"
+            [class.input-error]="
+              f['firstName'].invalid && (f['firstName'].touched || submitted)
+            "
+          />
+          <div
+            class="field-error"
+            *ngIf="
+              f['firstName'].invalid && (f['firstName'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['firstName'].errors?.['required']"
+              >First name is required.</span
+            >
+            <span *ngIf="f['firstName'].errors?.['maxlength']"
+              >Max 100 characters.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Last Name</label>
-          <input type="text" formControlName="lastName" placeholder="Smith" />
+          <label>Last Name <span class="required-star">*</span></label>
+          <input
+            type="text"
+            formControlName="lastName"
+            placeholder="Smith"
+            [class.input-error]="
+              f['lastName'].invalid && (f['lastName'].touched || submitted)
+            "
+          />
+          <div
+            class="field-error"
+            *ngIf="
+              f['lastName'].invalid && (f['lastName'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['lastName'].errors?.['required']"
+              >Last name is required.</span
+            >
+            <span *ngIf="f['lastName'].errors?.['maxlength']"
+              >Max 100 characters.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Email Address</label>
+          <label>Email Address <span class="required-star">*</span></label>
           <input
             type="email"
             formControlName="email"
             placeholder="doctor@hospital.org"
+            [class.input-error]="
+              f['email'].invalid && (f['email'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="f['email'].invalid && (f['email'].touched || submitted)"
+          >
+            <span *ngIf="f['email'].errors?.['required']"
+              >Email is required.</span
+            >
+            <span *ngIf="f['email'].errors?.['email']"
+              >Enter a valid email address.</span
+            >
+          </div>
         </div>
 
+        <!-- Phone with country code selector -->
         <div class="input-group">
-          <label>Phone Number</label>
-          <input
-            type="tel"
-            formControlName="phoneNumber"
-            placeholder="+91 98765 43210"
-          />
+          <label>Phone Number <span class="required-star">*</span></label>
+          <div
+            class="phone-row"
+            [class.input-error]="
+              (f['phoneNumber'].invalid || f['countryCode'].invalid) &&
+              (f['phoneNumber'].touched || submitted)
+            "
+          >
+            <select formControlName="countryCode" class="country-code-select">
+              <option *ngFor="let c of countryCodes" [value]="c.code">
+                {{ c.label }}
+              </option>
+            </select>
+            <input
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="9876543210"
+              class="phone-input"
+            />
+          </div>
+          <div
+            class="field-error"
+            *ngIf="
+              f['phoneNumber'].invalid &&
+              (f['phoneNumber'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['phoneNumber'].errors?.['required']"
+              >Phone number is required.</span
+            >
+            <span *ngIf="f['phoneNumber'].errors?.['pattern']"
+              >Enter 6–14 digits, no spaces or dashes.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
           <label>Date of Birth</label>
-          <input type="date" formControlName="dateOfBirth" />
+          <input
+            type="date"
+            formControlName="dateOfBirth"
+            [class.input-error]="
+              f['dateOfBirth'].invalid &&
+              (f['dateOfBirth'].touched || submitted)
+            "
+          />
+          <div
+            class="field-error"
+            *ngIf="
+              f['dateOfBirth'].invalid &&
+              (f['dateOfBirth'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['dateOfBirth'].errors?.['minAge']"
+              >Doctor must be at least 25 years old.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Gender</label>
-          <select formControlName="gender">
+          <label>Gender <span class="required-star">*</span></label>
+          <select
+            formControlName="gender"
+            [class.input-error]="
+              f['gender'].invalid && (f['gender'].touched || submitted)
+            "
+          >
             <option value="" disabled selected>Select gender</option>
             <option value="0">Male</option>
             <option value="1">Female</option>
             <option value="2">Other</option>
           </select>
+          <div
+            class="field-error"
+            *ngIf="f['gender'].invalid && (f['gender'].touched || submitted)"
+          >
+            <span *ngIf="f['gender'].errors?.['required']"
+              >Gender is required.</span
+            >
+          </div>
         </div>
 
         <div class="input-group full-width">
-          <label>Address</label>
+          <label>Address <span class="required-star">*</span></label>
           <input
             type="text"
             formControlName="address"
             placeholder="123 Hospital Road, City"
+            [class.input-error]="
+              f['address'].invalid && (f['address'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="f['address'].invalid && (f['address'].touched || submitted)"
+          >
+            <span *ngIf="f['address'].errors?.['required']"
+              >Address is required.</span
+            >
+            <span *ngIf="f['address'].errors?.['maxlength']"
+              >Max 500 characters.</span
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -88,59 +216,163 @@
       <div class="section-label">Professional Details</div>
       <div class="form-grid">
         <div class="input-group">
-          <label>License Number</label>
+          <label>License Number <span class="required-star">*</span></label>
           <input
             type="text"
             formControlName="licenseNumber"
             placeholder="LIC-0000000"
+            [class.input-error]="
+              f['licenseNumber'].invalid &&
+              (f['licenseNumber'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="
+              f['licenseNumber'].invalid &&
+              (f['licenseNumber'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['licenseNumber'].errors?.['required']"
+              >License number is required.</span
+            >
+            <span *ngIf="f['licenseNumber'].errors?.['maxlength']"
+              >Max 50 characters.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Specialization</label>
+          <label>Specialization <span class="required-star">*</span></label>
           <input
             type="text"
             formControlName="specialization"
             placeholder="Cardiology"
+            [class.input-error]="
+              f['specialization'].invalid &&
+              (f['specialization'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="
+              f['specialization'].invalid &&
+              (f['specialization'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['specialization'].errors?.['required']"
+              >Specialization is required.</span
+            >
+            <span *ngIf="f['specialization'].errors?.['maxlength']"
+              >Max 100 characters.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Qualifications</label>
+          <label>Qualifications <span class="required-star">*</span></label>
           <input
             type="text"
             formControlName="qualifications"
             placeholder="MBBS, MD"
+            [class.input-error]="
+              f['qualifications'].invalid &&
+              (f['qualifications'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="
+              f['qualifications'].invalid &&
+              (f['qualifications'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['qualifications'].errors?.['required']"
+              >Qualifications are required.</span
+            >
+            <span *ngIf="f['qualifications'].errors?.['maxlength']"
+              >Max 200 characters.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Years of Experience</label>
+          <label
+            >Years of Experience <span class="required-star">*</span></label
+          >
           <input
             type="number"
             formControlName="yearsOfExperience"
             placeholder="0"
             min="0"
+            max="50"
+            [class.input-error]="
+              f['yearsOfExperience'].invalid &&
+              (f['yearsOfExperience'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="
+              f['yearsOfExperience'].invalid &&
+              (f['yearsOfExperience'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['yearsOfExperience'].errors?.['min']"
+              >Cannot be negative.</span
+            >
+            <span *ngIf="f['yearsOfExperience'].errors?.['max']"
+              >Maximum is 50 years.</span
+            >
+          </div>
         </div>
 
         <div class="input-group">
-          <label>Consultation Fee (₹)</label>
+          <label
+            >Consultation Fee (₹) <span class="required-star">*</span></label
+          >
           <input
             type="number"
             formControlName="consultationFee"
             placeholder="500"
             min="0"
+            [class.input-error]="
+              f['consultationFee'].invalid &&
+              (f['consultationFee'].touched || submitted)
+            "
           />
+          <div
+            class="field-error"
+            *ngIf="
+              f['consultationFee'].invalid &&
+              (f['consultationFee'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['consultationFee'].errors?.['min']"
+              >Fee cannot be negative.</span
+            >
+          </div>
         </div>
 
         <div class="input-group full-width">
-          <label>Bio</label>
+          <label>Bio <span class="required-star">*</span></label>
           <textarea
             formControlName="bio"
             rows="3"
             placeholder="Brief professional summary..."
+            [class.input-error]="
+              f['bio'].invalid && (f['bio'].touched || submitted)
+            "
           ></textarea>
+          <div
+            class="field-error"
+            *ngIf="f['bio'].invalid && (f['bio'].touched || submitted)"
+          >
+            <span *ngIf="f['bio'].errors?.['required']">Bio is required.</span>
+            <span *ngIf="f['bio'].errors?.['maxlength']"
+              >Max 500 characters.</span
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -150,8 +382,13 @@
       <div class="section-label">Account Setup</div>
       <div class="form-grid">
         <div class="input-group">
-          <label>Password</label>
-          <div class="password-container">
+          <label>Password <span class="required-star">*</span></label>
+          <div
+            class="password-container"
+            [class.input-error]="
+              f['password'].invalid && (f['password'].touched || submitted)
+            "
+          >
             <input
               [type]="passwordVisible ? 'text' : 'password'"
               formControlName="password"
@@ -195,6 +432,102 @@
                 <line x1="2" y1="2" x2="22" y2="22" />
               </svg>
             </button>
+          </div>
+          <div
+            class="field-error"
+            *ngIf="
+              f['password'].invalid && (f['password'].touched || submitted)
+            "
+          >
+            <span *ngIf="f['password'].errors?.['required']"
+              >Password is required.</span
+            >
+            <span *ngIf="f['password'].errors?.['minlength']"
+              >At least 8 characters required.</span
+            >
+            <span *ngIf="f['password'].errors?.['passwordComplexity']">
+              Must include an uppercase letter, a number, and a special
+              character.
+            </span>
+          </div>
+          <div class="input-group">
+            <label>Confirm Password <span class="required-star">*</span></label>
+            <div
+              class="password-container"
+              [class.input-error]="
+                (f['confirmPassword'].invalid ||
+                  form.errors?.['passwordMismatch']) &&
+                (f['confirmPassword'].touched || submitted)
+              "
+            >
+              <input
+                [type]="confirmPasswordVisible ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                class="eye-btn"
+                (click)="toggleConfirmPassword()"
+              >
+                <svg
+                  *ngIf="confirmPasswordVisible"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <svg
+                  *ngIf="!confirmPasswordVisible"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                  <path
+                    d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+                  />
+                  <path
+                    d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+                  />
+                  <line x1="2" y1="2" x2="22" y2="22" />
+                </svg>
+              </button>
+            </div>
+            <div
+              class="field-error"
+              *ngIf="
+                (f['confirmPassword'].invalid ||
+                  form.errors?.['passwordMismatch']) &&
+                (f['confirmPassword'].touched || submitted)
+              "
+            >
+              <span *ngIf="f['confirmPassword'].errors?.['required']"
+                >Please confirm the password.</span
+              >
+              <span
+                *ngIf="
+                  !f['confirmPassword'].errors?.['required'] &&
+                  form.errors?.['passwordMismatch']
+                "
+              >
+                Passwords do not match.
+              </span>
+            </div>
           </div>
         </div>
       </div>
