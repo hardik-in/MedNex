@@ -1,29 +1,187 @@
-<h2>Create Time Slots</h2>
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Timeslots</span>
+      <h1 class="page-title">Create Time Slots</h1>
+    </div>
+    <button
+      class="btn-back"
+      type="button"
+      (click)="router.navigate(['/admin/timeslots'])"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back to Timeslots
+    </button>
+  </div>
 
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <label>Doctor</label>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-card">
+    <!-- Doctor & Schedule -->
+    <div class="form-section">
+      <p class="section-label">Doctor & Schedule</p>
+      <div class="form-grid">
+        <div class="input-group full-width">
+          <label>Doctor <span class="required-star">*</span></label>
+          <select
+            formControlName="doctorId"
+            [class.input-error]="
+              f['doctorId'].invalid && (f['doctorId'].touched || submitted)
+            "
+          >
+            <option value="">Select a doctor</option>
+            <option *ngFor="let d of doctors" [value]="d.id">
+              {{ d.fullName
+              }}{{ d.specialization ? " — " + d.specialization : "" }}
+            </option>
+          </select>
+          <span
+            class="field-error"
+            *ngIf="
+              f['doctorId'].invalid && (f['doctorId'].touched || submitted)
+            "
+          >
+            Please select a doctor.
+          </span>
+        </div>
 
-  <select formControlName="doctorId">
-    <option value="">Select Doctor</option>
+        <div class="input-group full-width">
+          <label>Date <span class="required-star">*</span></label>
+          <input
+            type="date"
+            formControlName="date"
+            [class.input-error]="
+              f['date'].invalid && (f['date'].touched || submitted)
+            "
+          />
+          <span
+            class="field-error"
+            *ngIf="f['date'].invalid && (f['date'].touched || submitted)"
+          >
+            Please select a date.
+          </span>
+        </div>
+      </div>
+    </div>
 
-    <option *ngFor="let d of doctors" [value]="d.id">
-      {{ d.name }} ({{ d.specialization }})
-    </option>
-  </select>
+    <!-- Time Range -->
+    <div class="form-section">
+      <p class="section-label">Time Range</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Start Time <span class="required-star">*</span></label>
+          <input
+            type="time"
+            formControlName="startTime"
+            [class.input-error]="
+              f['startTime'].invalid && (f['startTime'].touched || submitted)
+            "
+          />
+          <span
+            class="field-error"
+            *ngIf="
+              f['startTime'].invalid && (f['startTime'].touched || submitted)
+            "
+          >
+            Please set a start time.
+          </span>
+        </div>
 
-  <label>Date</label>
-  <input type="date" formControlName="date" />
+        <div class="input-group">
+          <label>End Time <span class="required-star">*</span></label>
+          <input
+            type="time"
+            formControlName="endTime"
+            [class.input-error]="
+              f['endTime'].invalid && (f['endTime'].touched || submitted)
+            "
+          />
+          <span
+            class="field-error"
+            *ngIf="f['endTime'].invalid && (f['endTime'].touched || submitted)"
+          >
+            Please set an end time.
+          </span>
+        </div>
 
-  <label>Start Time</label>
-  <input type="time" formControlName="startTime" />
+        <div class="input-group">
+          <label
+            >Slot Duration (minutes) <span class="required-star">*</span></label
+          >
+          <input
+            type="number"
+            formControlName="durationMinutes"
+            min="5"
+            max="120"
+            placeholder="30"
+            [class.input-error]="
+              f['durationMinutes'].invalid &&
+              (f['durationMinutes'].touched || submitted)
+            "
+          />
+          <span
+            class="field-error"
+            *ngIf="
+              f['durationMinutes'].invalid &&
+              (f['durationMinutes'].touched || submitted)
+            "
+          >
+            Duration must be between 5 and 120 minutes.
+          </span>
+        </div>
 
-  <label>End Time</label>
-  <input type="time" formControlName="endTime" />
+        <div
+          class="slot-preview"
+          *ngIf="
+            f['startTime'].value &&
+            f['endTime'].value &&
+            f['durationMinutes'].value
+          "
+        >
+          <span class="preview-label">Estimated slots</span>
+          <span class="preview-count">
+            {{ calculateSlots() }}
+          </span>
+        </div>
+      </div>
+    </div>
 
-  <label>Slot Duration (minutes)</label>
-  <input type="number" formControlName="durationMinutes" />
-
-  <button type="submit" [disabled]="creating || form.invalid">
-    {{ creating ? "Creating..." : "Create Slots" }}
-  </button>
-</form>
+    <!-- Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-cancel"
+        (click)="router.navigate(['/admin/timeslots'])"
+      >
+        Cancel
+      </button>
+      <button type="submit" class="btn-submit" [disabled]="creating">
+        <svg
+          *ngIf="creating"
+          class="spinner-icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        {{ creating ? "Creating…" : "Create Slots" }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,44 +1,68 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AdminAppointmentsService } from '../admin-appointments.service';
-import { Doctor } from '../../../shared/models/doctor.model';
+import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
   selector: 'app-create-timeslot',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './create-timeslot.component.html',
+  styleUrl: './create-timeslot.component.css',
 })
 export class CreateTimeslotComponent implements OnInit {
-  doctors: Doctor[] = [];
-  creating = false;
+  private toast = inject(ToastService);
 
-  constructor(
-    private fb: FormBuilder,
-    private service: AdminAppointmentsService,
-  ) {}
+  doctors: any[] = [];
+  creating = false;
+  submitted = false;
 
   form = this.fb.group({
     doctorId: ['', Validators.required],
     date: ['', Validators.required],
     startTime: ['', Validators.required],
     endTime: ['', Validators.required],
-    durationMinutes: [30, Validators.required],
+    durationMinutes: [
+      30,
+      [Validators.required, Validators.min(5), Validators.max(120)],
+    ],
   });
 
-  ngOnInit() {
-    this.loadDoctors();
+  get f() {
+    return this.form.controls;
   }
 
-  loadDoctors() {
+  constructor(
+    private fb: FormBuilder,
+    private service: AdminAppointmentsService,
+    public router: Router,
+  ) {}
+
+  ngOnInit() {
     this.service.getDoctors().subscribe((res) => {
       this.doctors = res;
     });
   }
 
+  calculateSlots(): number {
+    const start = this.form.value.startTime;
+    const end = this.form.value.endTime;
+    const dur = Number(this.form.value.durationMinutes);
+    if (!start || !end || !dur) return 0;
+
+    const [sh, sm] = start.split(':').map(Number);
+    const [eh, em] = end.split(':').map(Number);
+    const totalMinutes = eh * 60 + em - (sh * 60 + sm);
+    return totalMinutes > 0 ? Math.floor(totalMinutes / dur) : 0;
+  }
+
   submit() {
+    this.submitted = true;
     if (this.form.invalid) return;
+
+    this.creating = true;
 
     const payload = {
       doctorId: Number(this.form.value.doctorId),
@@ -50,10 +74,14 @@ export class CreateTimeslotComponent implements OnInit {
 
     this.service.createTimeSlots(payload).subscribe({
       next: () => {
-        alert('Slots created successfully');
+        this.creating = false;
+        this.toast.success('Time slots created successfully.');
+        this.form.reset({ durationMinutes: 30 });
+        this.submitted = false;
       },
-      error: (err) => {
-        console.error(err);
+      error: () => {
+        this.creating = false;
+        this.toast.error('Failed to create time slots. Please try again.');
       },
     });
   }

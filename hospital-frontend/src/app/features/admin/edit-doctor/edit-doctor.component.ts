@@ -1,24 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminAppointmentsService } from '../admin-appointments.service';
+import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
   selector: 'app-edit-doctor',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './edit-doctor.component.html',
+  styleUrl: './edit-doctor.component.css',
 })
 export class EditDoctorComponent implements OnInit {
+  private toast = inject(ToastService);
+
+  private originalValues: any = null;
   admins: any[] = [];
   filteredAdmins: any[] = [];
   selectedAdmin: any = null;
   showAdminPopup = false;
+  showConfirmPopup = false;
   adminSearch = '';
 
   form = this.fb.group({
+    id: [{ value: '', disabled: true }],
+    userId: [{ value: '', disabled: true }],
     firstName: [{ value: '', disabled: true }],
     lastName: [{ value: '', disabled: true }],
     email: [''],
@@ -54,6 +62,9 @@ export class EditDoctorComponent implements OnInit {
         assignedAdminId: d.assignedAdminId ? String(d.assignedAdminId) : '',
       });
 
+      // Snapshot the loaded values for dirty checking
+      this.originalValues = this.form.getRawValue();
+
       if (d.assignedAdminId) {
         this.service.getAdmins().subscribe((admins) => {
           this.selectedAdmin =
@@ -65,7 +76,7 @@ export class EditDoctorComponent implements OnInit {
 
   openAdminPopup() {
     this.adminSearch = '';
-    this.filteredAdmins = [];   
+    this.filteredAdmins = this.admins; // show all by default
     this.showAdminPopup = true;
   }
 
@@ -76,13 +87,14 @@ export class EditDoctorComponent implements OnInit {
   onAdminSearch() {
     const term = this.adminSearch.toLowerCase().trim();
     if (!term) {
-      this.filteredAdmins = [];
+      this.filteredAdmins = this.admins;
       return;
     }
     this.filteredAdmins = this.admins.filter(
       (a) =>
-        `${a.firstName} ${a.lastName}`.toLowerCase().includes(term) ||
-        a.employeeId?.toLowerCase().includes(term),
+        a.firstName.toLowerCase().startsWith(term) ||
+        a.lastName.toLowerCase().startsWith(term) ||
+        a.employeeId?.toLowerCase().startsWith(term),
     );
   }
 
@@ -92,7 +104,24 @@ export class EditDoctorComponent implements OnInit {
     this.closeAdminPopup();
   }
 
-  submit() {
+  // Called by the form submit — shows confirmation popup instead of saving immediately
+  requestConfirm() {
+    const current = this.form.getRawValue();
+    const hasChanges =
+      JSON.stringify(current) !== JSON.stringify(this.originalValues);
+    if (!hasChanges) {
+      this.toast.warning('No changes were made.');
+      return;
+    }
+    this.showConfirmPopup = true;
+  }
+
+  cancelConfirm() {
+    this.showConfirmPopup = false;
+  }
+
+  confirmSubmit() {
+    this.showConfirmPopup = false;
     const id = this.route.snapshot.paramMap.get('id');
     const raw = this.form.getRawValue();
 
@@ -114,9 +143,14 @@ export class EditDoctorComponent implements OnInit {
         : undefined,
     };
 
-    this.service.updateDoctor(Number(id), payload).subscribe(() => {
-      alert('Doctor updated');
-      this.router.navigate(['/admin/doctors']);
+    this.service.updateDoctor(Number(id), payload).subscribe({
+      next: () => {
+        this.toast.success('Doctor updated successfully.');
+        this.router.navigate(['/admin/doctors']);
+      },
+      error: () => {
+        this.toast.error('Failed to update doctor. Please try again.');
+      },
     });
   }
 }

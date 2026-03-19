@@ -1,0 +1,507 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap");
+
+/* ── Variables ───────────────────────────────────── */
+:host {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface-2: #f7fafc;
+  --border: #e1e8f0;
+  --border-soft: #edf2f7;
+  --accent: #4b9fe1;
+  --accent-dark: #2f7bc8;
+  --accent-soft: rgba(75, 159, 225, 0.1);
+  --accent-glow: rgba(75, 159, 225, 0.2);
+  --text-1: #1a2b4a;
+  --text-2: #4a6080;
+  --text-3: #94a8c0;
+  --success: #3cb97a;
+  --success-soft: rgba(60, 185, 122, 0.1);
+  --warning: #e0a83c;
+  --warning-soft: rgba(224, 168, 60, 0.1);
+  --danger: #e05c6a;
+  --danger-soft: rgba(224, 92, 106, 0.08);
+  --radius: 14px;
+  --radius-sm: 10px;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--text-1);
+}
+
+/* ── Wrapper ─────────────────────────────────────── */
+.page-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+/* ── Header ──────────────────────────────────────── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  gap: 16px;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-back:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+
+.btn-edit:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(75, 159, 225, 0.35);
+}
+
+/* ── Loading ─────────────────────────────────────── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 80px 24px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Profile Card ────────────────────────────────── */
+.profile-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(26, 43, 74, 0.06);
+  margin-bottom: 20px;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 32px;
+  border-bottom: 1px solid var(--border-soft);
+  background: linear-gradient(135deg, var(--accent-soft) 0%, transparent 60%);
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.profile-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.page-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.profile-specialization {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 400;
+}
+
+/* ── Info Grid ───────────────────────────────────── */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
+}
+
+.info-item:nth-child(even) {
+  border-right: none;
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+  border-right: none;
+}
+
+.info-item:last-child,
+.info-item:nth-last-child(2):not(.full-width) {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.info-value {
+  font-size: 14px;
+  color: var(--text-1);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.info-value.mono {
+  font-family: "DM Sans", monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+}
+
+.info-value.bio-text {
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* ── Section Card (Appointments) ─────────────────── */
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(26, 43, 74, 0.06);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.section-label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 20px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* ── Table Search ────────────────────────────────── */
+.table-search-wrap {
+  position: relative;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.table-search-icon {
+  position: absolute;
+  left: 38px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.table-search {
+  width: 100%;
+  padding: 9px 14px 9px 36px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.table-search::placeholder {
+  color: var(--text-3);
+}
+
+.table-search:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--surface);
+}
+
+:host-context(body.dark) .table-search {
+  background: #111520;
+  border-color: #252d40;
+  color: #e2e8f4;
+}
+
+:host-context(body.dark) .table-search:focus {
+  background: #1c2333;
+  border-color: #4f7ef8;
+}
+
+/* ── Empty State ─────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 56px 24px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+/* ── Table ───────────────────────────────────────── */
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead tr {
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  padding: 11px 24px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 14px 24px;
+  font-size: 14px;
+  color: var(--text-1);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tbody tr {
+  transition: background 0.15s;
+}
+
+.data-table tbody tr:hover {
+  background: var(--surface-2);
+}
+
+.text-muted {
+  color: var(--text-2) !important;
+  font-size: 13px !important;
+}
+
+.patient-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.15s;
+}
+
+.patient-link:hover {
+  opacity: 0.75;
+  text-decoration: underline;
+}
+
+/* ── Status Badge ────────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: capitalize;
+  background: var(--border-soft);
+  color: var(--text-2);
+}
+
+.status-completed {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.status-scheduled,
+.status-confirmed {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.status-cancelled,
+.status-canceled {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.status-pending {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.status-noshow {
+  background: rgba(148, 168, 192, 0.12);
+  color: var(--text-3);
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 640px) {
+  .page-wrapper {
+    padding: 24px 16px 60px;
+  }
+  .profile-hero {
+    padding: 20px;
+    gap: 16px;
+  }
+  .profile-avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 18px;
+  }
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-item {
+    border-right: none;
+  }
+  .info-item:nth-last-child(2):not(.full-width) {
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .data-table th,
+  .data-table td {
+    padding: 11px 16px;
+  }
+  .page-header {
+    flex-wrap: wrap;
+  }
+}
+
+/* ── Dark Theme ──────────────────────────────────── */
+:host-context(body.dark) {
+  --bg: #0e1117;
+  --surface: #161b27;
+  --surface-2: #1c2333;
+  --border: #252d40;
+  --border-soft: #1e2636;
+  --accent: #4f7ef8;
+  --accent-dark: #3a6be0;
+  --accent-soft: rgba(79, 126, 248, 0.1);
+  --accent-glow: rgba(79, 126, 248, 0.2);
+  --text-1: #e2e8f4;
+  --text-2: #7e8fb5;
+  --text-3: #445070;
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+:host-context(body.dark) .profile-card,
+:host-context(body.dark) .section-card {
+  box-shadow: none;
+}
+
+:host-context(body.dark) .loading-spinner {
+  border-color: #252d40;
+  border-top-color: #4f7ef8;
+}

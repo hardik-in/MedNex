@@ -1,23 +1,147 @@
-<h2>All Appointments</h2>
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Admin</span>
+      <h1 class="page-title">Appointments</h1>
+    </div>
+  </div>
 
-<div *ngIf="loading">Loading appointments...</div>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg
+        class="search-icon"
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by patient or doctor…"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+      />
+    </div>
 
-<table *ngIf="!loading && appointments.length > 0">
-  <tr>
-    <th>Patient</th>
-    <th>Doctor</th>
-    <th>Date</th>
-    <th>Slot</th>
-    <th>Status</th>
-  </tr>
+    <select
+      class="filter-select"
+      [(ngModel)]="statusFilter"
+      (change)="applyFilters()"
+    >
+      <option value="">All Statuses</option>
+      <option *ngFor="let s of statusOptions" [value]="s.value">
+        {{ s.label }}
+      </option>
+    </select>
+  </div>
 
-  <tr *ngFor="let a of appointments">
-    <td>{{ a.patientName }}</td>
-    <td>{{ a.doctorName }}</td>
-    <td>{{ a.appointmentDate | date }}</td>
-    <td>{{ a.startTime }} - {{ a.endTime }}</td>
-    <td>{{ a.status }}</td>
-  </tr>
-</table>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Loading appointments…</span>
+  </div>
 
-<div *ngIf="!loading && appointments.length === 0">No appointments found</div>
+  <!-- Table Card -->
+  <div class="table-card" *ngIf="!loading">
+    <!-- Empty: no data at all -->
+    <div *ngIf="appointments.length === 0" class="empty-state">
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+      <span>No appointments found</span>
+    </div>
+
+    <!-- Empty: filters returned nothing -->
+    <div
+      *ngIf="appointments.length > 0 && filtered.length === 0"
+      class="empty-state"
+    >
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <span>No appointments match your filters</span>
+    </div>
+
+    <div class="table-wrap" *ngIf="filtered.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Specialization</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of filtered">
+            <td>
+              <a
+                class="table-link"
+                [routerLink]="['/admin/patients', a.patientId]"
+              >
+                {{ a.patientName }}
+              </a>
+            </td>
+            <td>
+              <a
+                class="table-link"
+                [routerLink]="['/admin/doctors', a.doctorId]"
+              >
+                {{ a.doctorName }}
+              </a>
+            </td>
+            <td class="text-muted">{{ a.doctorSpecialization || "—" }}</td>
+            <td class="text-muted">
+              {{ a.appointmentDate | date: "mediumDate" }}
+            </td>
+            <td class="text-muted">{{ a.startTime }} – {{ a.endTime }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatus(a.status).css">
+                {{ getStatus(a.status).label }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer count -->
+    <div class="table-footer" *ngIf="filtered.length > 0">
+      Showing {{ filtered.length }} of {{ appointments.length }} appointments
+    </div>
+  </div>
+</div>

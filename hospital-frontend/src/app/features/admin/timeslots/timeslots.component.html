@@ -1,36 +1,240 @@
-<p>timeslots works!</p>
-<h2>Manage Time Slots</h2>
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Admin</span>
+      <h1 class="page-title">Manage Time Slots</h1>
+    </div>
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="router.navigate(['/admin/create-timeslot'])"
+    >
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Create Slots
+    </button>
+  </div>
 
-<label>Select Doctor</label>
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="select-wrap">
+      <svg
+        class="select-icon"
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      <select
+        class="toolbar-select"
+        [(ngModel)]="selectedDoctorId"
+        (change)="onDoctorChange()"
+      >
+        <option value="">Select a doctor…</option>
+        <option *ngFor="let d of doctors" [value]="d.id">
+          {{ d.fullName }}{{ d.specialization ? " — " + d.specialization : "" }}
+        </option>
+      </select>
+    </div>
 
-<select #doctorSelect (change)="loadSlots(+doctorSelect.value)">
-  <option value="">Select doctor</option>
+    <select
+      class="filter-select"
+      [(ngModel)]="statusFilter"
+      (change)="applyFilter()"
+      [disabled]="slots.length === 0"
+    >
+      <option value="">All Statuses</option>
+      <option *ngFor="let s of statusOptions" [value]="s.value">
+        {{ s.label }}
+      </option>
+    </select>
+  </div>
 
-  <option *ngFor="let d of doctors" [value]="d.id">
-    {{ d.name }} ({{ d.specialization }})
-  </option>
-</select>
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Loading time slots…</span>
+  </div>
 
-<table *ngIf="slots.length > 0">
-  <tr>
-    <th>Date</th>
-    <th>Start</th>
-    <th>End</th>
-    <th>Status</th>
-    <th>Action</th>
-  </tr>
+  <!-- Prompt: no doctor selected -->
+  <div *ngIf="!loading && !selectedDoctorId" class="prompt-state">
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+    <span>Select a doctor to view their time slots</span>
+  </div>
 
-  <tr *ngFor="let s of slots">
-    <td>{{ s.date | date }}</td>
+  <!-- Table Card -->
+  <div class="table-card" *ngIf="!loading && selectedDoctorId">
+    <!-- Empty: no slots for doctor -->
+    <div *ngIf="slots.length === 0" class="empty-state">
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </svg>
+      <span>No time slots found for this doctor</span>
+      <button
+        class="btn-primary-sm"
+        (click)="router.navigate(['/admin/create-timeslot'])"
+      >
+        Create Slots
+      </button>
+    </div>
 
-    <td>{{ s.startTime }}</td>
+    <!-- Empty: filter returned nothing -->
+    <div
+      *ngIf="slots.length > 0 && filteredSlots.length === 0"
+      class="empty-state"
+    >
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <span>No slots match the selected status</span>
+    </div>
 
-    <td>{{ s.endTime }}</td>
+    <div class="table-wrap" *ngIf="filteredSlots.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of filteredSlots">
+            <td>{{ s.date | date: "mediumDate" }}</td>
+            <td class="text-muted mono">{{ s.startTime }}</td>
+            <td class="text-muted mono">{{ s.endTime }}</td>
+            <td class="text-muted">{{ s.durationMinutes }} min</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatus(s.status).css">
+                {{ getStatus(s.status).label }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <button
+                class="btn-delete"
+                (click)="confirmDelete(s)"
+                [disabled]="s.status === 2"
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                  <path d="M10 11v6" />
+                  <path d="M14 11v6" />
+                  <path d="M9 6V4h6v2" />
+                </svg>
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <td>{{ s.status }}</td>
+    <!-- Footer -->
+    <div class="table-footer" *ngIf="filteredSlots.length > 0">
+      Showing {{ filteredSlots.length }} of {{ slots.length }} slots
+    </div>
+  </div>
+</div>
 
-    <td>
-      <button (click)="deleteSlot(s.id)">Delete</button>
-    </td>
-  </tr>
-</table>
+<!-- Delete Confirmation Popup -->
+<div class="popup-overlay" *ngIf="slotToDelete" (click)="cancelDelete()">
+  <div class="popup popup--confirm" (click)="$event.stopPropagation()">
+    <div class="confirm-icon confirm-icon--danger">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+        <path d="M10 11v6" />
+        <path d="M14 11v6" />
+        <path d="M9 6V4h6v2" />
+      </svg>
+    </div>
+
+    <h3 class="confirm-title">Delete Time Slot?</h3>
+    <p class="confirm-body">
+      This will permanently remove the slot<br />
+      <strong>{{ slotToDelete.label }}</strong>
+    </p>
+
+    <div class="confirm-actions">
+      <button type="button" class="btn-cancel" (click)="cancelDelete()">
+        Cancel
+      </button>
+      <button type="button" class="btn-danger" (click)="deleteSlot()">
+        Yes, Delete
+      </button>
+    </div>
+  </div>
+</div>

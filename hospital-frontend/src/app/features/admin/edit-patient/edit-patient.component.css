@@ -27,7 +27,7 @@
 
 /* ── Wrapper ─────────────────────────────────────── */
 .page-wrapper {
-  max-width: 680px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 40px 32px 80px;
 }
@@ -79,6 +79,29 @@
   white-space: nowrap;
   flex-shrink: 0;
   margin-top: 6px;
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+
+.btn-edit:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(75, 159, 225, 0.35);
 }
 
 .btn-back:hover {
@@ -155,12 +178,14 @@
   appearance: none;
 }
 
-.input-group input::placeholder {
+.input-group input::placeholder,
+.input-group textarea::placeholder {
   color: var(--text-3);
 }
 
 .input-group input:focus,
-.input-group select:focus {
+.input-group select:focus,
+.input-group textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-glow);
   background: #fff;
@@ -174,53 +199,27 @@
   cursor: pointer;
 }
 
-/* ── Error States ────────────────────────────────── */
-.required-star {
-  color: var(--danger);
-  margin-left: 2px;
+.input-group textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
 }
 
-.field-error {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--danger);
-  letter-spacing: 0.02em;
+/* ── Disabled Fields ─────────────────────────────── */
+.input-group input.disabled-field,
+.input-group input[disabled] {
+  background: var(--surface-2);
+  color: var(--text-3);
+  border-color: var(--border-soft);
+  cursor: not-allowed;
+  user-select: none;
 }
 
-input.input-error,
-select.input-error {
-  border-color: var(--danger) !important;
-  box-shadow: 0 0 0 3px var(--danger-soft);
-}
-
-/* ── Slot Preview ────────────────────────────────── */
-.slot-preview {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 6px;
-  padding: 14px 18px;
-  background: var(--accent-soft);
-  border: 1px solid rgba(75, 159, 225, 0.2);
-  border-radius: var(--radius-sm);
-  align-self: end;
-}
-
-.preview-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.preview-count {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1;
-  letter-spacing: -0.02em;
+.input-group input.disabled-field:focus,
+.input-group input[disabled]:focus {
+  border-color: var(--border-soft);
+  box-shadow: none;
+  background: var(--surface-2);
 }
 
 /* ── Form Actions ────────────────────────────────── */
@@ -253,9 +252,6 @@ select.input-error {
 }
 
 .btn-submit {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   padding: 10px 28px;
   background: linear-gradient(135deg, var(--accent-dark), var(--accent));
   border: none;
@@ -269,25 +265,106 @@ select.input-error {
   letter-spacing: 0.01em;
 }
 
-.btn-submit:hover:not(:disabled) {
+.btn-submit:hover {
   opacity: 0.9;
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(75, 159, 225, 0.35);
 }
 
-.btn-submit:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* ── Confirm Popup ───────────────────────────────── */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 30, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.15s ease;
 }
 
-.spinner-icon {
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+
+.popup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow:
+    0 20px 60px rgba(10, 15, 30, 0.18),
+    0 4px 16px rgba(10, 15, 30, 0.1);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.popup--confirm {
+  max-width: 400px;
+  width: 100%;
+  padding: 32px 28px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid rgba(75, 159, 225, 0.2);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.confirm-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0 0 10px;
+  letter-spacing: -0.02em;
+}
+
+.confirm-body {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.confirm-actions .btn-cancel,
+.confirm-actions .btn-submit {
+  flex: 1;
 }
 
 /* ── Responsive ──────────────────────────────────── */
@@ -328,22 +405,37 @@ select.input-error {
 }
 
 :host-context(body.dark) .input-group input,
-:host-context(body.dark) .input-group select {
+:host-context(body.dark) .input-group select,
+:host-context(body.dark) .input-group textarea {
   background: #111520;
   border-color: #252d40;
   color: #e2e8f4;
 }
 
 :host-context(body.dark) .input-group input:focus,
-:host-context(body.dark) .input-group select:focus {
+:host-context(body.dark) .input-group select:focus,
+:host-context(body.dark) .input-group textarea:focus {
   background: #1c2333;
   border-color: #4f7ef8;
+}
+
+:host-context(body.dark) .input-group input.disabled-field,
+:host-context(body.dark) .input-group input[disabled] {
+  background: #0e1117;
+  border-color: #1e2636;
+  color: #445070;
 }
 
 :host-context(body.dark) .form-card {
   box-shadow: none;
 }
 
-:host-context(body.dark) .slot-preview {
-  border-color: rgba(79, 126, 248, 0.2);
+:host-context(body.dark) .popup {
+  background: #161b27;
+  border-color: #252d40;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+:host-context(body.dark) .popup-overlay {
+  background: rgba(0, 0, 0, 0.65);
 }

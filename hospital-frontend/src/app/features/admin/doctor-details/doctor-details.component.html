@@ -1,40 +1,227 @@
-<h2>Doctor Profile</h2>
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <button
+      class="btn-back"
+      type="button"
+      (click)="router.navigate(['/admin/doctors'])"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Back to Doctors
+    </button>
+    <button
+      *ngIf="doctor"
+      class="btn-edit"
+      type="button"
+      (click)="router.navigate(['/admin/doctors/edit', doctor.id])"
+    >
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+      </svg>
+      Edit Doctor
+    </button>
+  </div>
 
-<div *ngIf="doctor">
-  <h3>{{ doctor.firstName }} {{ doctor.lastName }}</h3>
+  <!-- Loading state -->
+  <div *ngIf="!doctor" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Loading doctor profile…</span>
+  </div>
 
-  <p><b>Email:</b> {{ doctor.email }}</p>
-  <p><b>Phone:</b> {{ doctor.phoneNumber }}</p>
-  <p><b>License:</b> {{ doctor.licenseNumber }}</p>
-  <p><b>Specialization:</b> {{ doctor.specialization }}</p>
-  <p><b>Experience:</b> {{ doctor.yearsOfExperience }} years</p>
-  <p><b>Consultation Fee:</b> ₹{{ doctor.consultationFee }}</p>
-  <p><b>Assigned Admin:</b> {{ doctor.assignedAdminName }}</p>
+  <ng-container *ngIf="doctor">
+    <!-- Profile Hero -->
+    <div class="profile-card">
+      <div class="profile-hero">
+        <div class="profile-avatar">{{ getInitials() }}</div>
+        <div class="profile-identity">
+          <span class="page-eyebrow">Doctor Profile</span>
+          <h1 class="page-title">
+            {{ doctor.firstName }} {{ doctor.lastName }}
+          </h1>
+          <span class="profile-specialization">{{
+            doctor.specialization
+          }}</span>
+        </div>
+      </div>
+
+      <!-- Info Grid -->
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Doctor ID</span>
+          <span class="info-value mono">#{{ doctor.id }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ doctor.email }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ doctor.phoneNumber || "—" }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">License Number</span>
+          <span class="info-value mono">{{ doctor.licenseNumber }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Experience</span>
+          <span class="info-value">{{ doctor.yearsOfExperience }} years</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Consultation Fee</span>
+          <span class="info-value">₹{{ doctor.consultationFee ?? "—" }}</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Assigned Admin</span>
+          <span class="info-value">{{ doctor.assignedAdminName || "—" }}</span>
+        </div>
+
+        <div class="info-item full-width" *ngIf="doctor.qualifications">
+          <span class="info-label">Qualifications</span>
+          <span class="info-value">{{ doctor.qualifications }}</span>
+        </div>
+
+        <div class="info-item full-width" *ngIf="doctor.bio">
+          <span class="info-label">Bio</span>
+          <span class="info-value bio-text">{{ doctor.bio }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appointments Table -->
+    <div class="section-card">
+      <div class="section-header">
+        <p class="section-label">Patients & Appointments</p>
+        <span class="badge">{{ patients.length }}</span>
+      </div>
+
+      <!-- Search -->
+      <div class="table-search-wrap" *ngIf="patients.length > 0">
+        <svg
+          class="table-search-icon"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="text"
+          class="table-search"
+          placeholder="Search by name or patient ID…"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+        />
+      </div>
+
+      <!-- Empty: no patients at all -->
+      <div *ngIf="patients.length === 0" class="empty-state">
+        <svg
+          width="36"
+          height="36"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+        <span>No appointments yet</span>
+      </div>
+
+      <!-- Empty: search returned nothing -->
+      <div
+        *ngIf="patients.length > 0 && filteredPatients.length === 0"
+        class="empty-state"
+      >
+        <svg
+          width="36"
+          height="36"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <span>No patients match "{{ searchTerm }}"</span>
+      </div>
+
+      <div class="table-wrap" *ngIf="filteredPatients.length > 0">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Patient ID</th>
+              <th>Last Visit</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of filteredPatients">
+              <td>
+                <a
+                  class="patient-link"
+                  [routerLink]="['/admin/patients', p.patientId]"
+                >
+                  {{ p.patientName }}
+                </a>
+              </td>
+              <td class="text-muted">#{{ p.patientId }}</td>
+              <td class="text-muted">
+                {{ p.lastAppointmentDate | date: "mediumDate" }}
+              </td>
+              <td class="text-muted">{{ p.startTime }} – {{ p.endTime }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatus(p.status).css">
+                  {{ getStatus(p.status).label }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
 </div>
-
-<hr />
-
-<h3>Patients / Appointments</h3>
-
-<table>
-  <tr>
-    <th>Patient</th>
-    <th>Last Visit</th>
-    <th>Time</th>
-    <th>Status</th>
-  </tr>
-
-  <tr *ngFor="let p of patients">
-    <td>
-      <a [routerLink]="['/admin/patients', p.patientId]">
-        {{ p.patientName }}
-      </a>
-    </td>
-
-    <td>{{ p.lastAppointmentDate | date }}</td>
-    <td>{{ p.startTime }} - {{ p.endTime }}</td>
-    <td>{{ p.status }}</td>
-  </tr>
-</table>
-
-<div *ngIf="appointments.length === 0">No appointments yet</div>
