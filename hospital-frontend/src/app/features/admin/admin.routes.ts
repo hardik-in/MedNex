@@ -10,6 +10,7 @@ import { CreateTimeslotComponent } from './create-timeslot/create-timeslot.compo
 import { TimeslotsComponent } from './timeslots/timeslots.component';
 import { PatientDetailsComponent } from './patient-details/patient-details.component';
 import { EditPatientComponent } from './edit-patient/edit-patient.component';
+import { PatientsComponent } from './patients/patients.component';
 
 export const ADMIN_ROUTES: Routes = [
   {
@@ -24,6 +25,7 @@ export const ADMIN_ROUTES: Routes = [
       { path: 'appointments', component: AppointmentsComponent },
       { path: 'create-timeslot', component: CreateTimeslotComponent },
       { path: 'timeslots', component: TimeslotsComponent },
+      { path: 'patients', component: PatientsComponent },
       { path: 'patients/:id', component: PatientDetailsComponent },
       { path: 'patients/edit/:id', component: EditPatientComponent },
     ],

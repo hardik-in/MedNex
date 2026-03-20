@@ -14,6 +14,9 @@
   --text-2: #4a6080;
   --text-3: #94a8c0;
   --danger: #e05c6a;
+  --danger-soft: rgba(224, 92, 106, 0.08);
+  --success: #3cb97a;
+  --success-soft: rgba(60, 185, 122, 0.1);
   --radius: 14px;
   --radius-sm: 10px;
   display: block;
@@ -30,7 +33,6 @@
   position: relative;
 }
 
-/* Top accent line over right panel */
 .login-wrapper::before {
   content: "";
   position: absolute;
@@ -53,7 +55,6 @@
   background: linear-gradient(145deg, #1a3a6e 0%, #2a5fa8 50%, #4b9fe1 100%);
 }
 
-/* Glow behind stethoscope */
 .left-panel::after {
   content: "";
   position: absolute;
@@ -102,12 +103,9 @@
 .brand-icon {
   width: 52px;
   height: 36px;
-  background: transparent;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
 }
 
 .heartbeat-svg {
@@ -144,7 +142,6 @@
   letter-spacing: -0.02em;
 }
 
-/* ── Theme Toggle ────────────────────────────────── */
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -173,24 +170,8 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 20px;
-  position: relative;
 }
 
-/* ── Stethoscope ─────────────────────────────────── */
-.stethoscope-art {
-  position: absolute;
-  right: -200px;
-  top: 40px;
-  width: 240px;
-  height: auto;
-  opacity: 0.18;
-  pointer-events: none;
-  filter: brightness(0) invert(1);
-  mix-blend-mode: screen;
-  transform: rotate(10deg);
-}
-
-/* ── ECG Art ─────────────────────────────────────── */
 .ecg-art {
   width: 100%;
   height: 40px;
@@ -225,7 +206,6 @@
   }
 }
 
-/* ── Left Headline ───────────────────────────────── */
 .left-headline h1 {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: clamp(36px, 4vw, 54px);
@@ -303,12 +283,12 @@
 .right-panel {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   background: var(--surface);
   border-left: 1px solid var(--border);
-  padding: 40px 48px;
   position: relative;
+  overflow: hidden;
 }
 
 .right-panel::after {
@@ -322,18 +302,26 @@
   pointer-events: none;
 }
 
-/* ── Login Card ──────────────────────────────────── */
+/* ── Scrollable container inside right panel ─────── */
+.form-scroll {
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 48px 64px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Form Card ───────────────────────────────────── */
 .login-card {
   width: 100%;
   max-width: 440px;
-  background: transparent;
-  border: none;
-  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  position: relative;
-  z-index: 1;
+  gap: 20px;
 }
 
 /* ── Header ──────────────────────────────────────── */
@@ -341,22 +329,12 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 8px;
-}
-
-.header::before {
-  content: "MEDNEX — HOSPITAL MANAGEMENT";
-  display: block;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  color: var(--accent);
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .header h2 {
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 800;
   color: var(--text-1);
   margin: 0;
@@ -371,11 +349,49 @@
   font-weight: 300;
 }
 
+/* ── Lock icon for code gate ─────────────────────── */
+.lock-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(75, 159, 225, 0.2);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.code-gate-card {
+  margin: auto 0;
+}
+
+/* ── Section labels inside form ──────────────────── */
+.form-section-label {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-top: 4px;
+}
+
+/* ── Field Row (two columns) ─────────────────────── */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
 /* ── Input Groups ────────────────────────────────── */
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .input-group label {
@@ -386,29 +402,48 @@
   text-transform: uppercase;
 }
 
-.input-group input {
+.input-group input,
+.input-group select,
+.input-group textarea {
   width: 100%;
-  padding: 13px 16px;
+  padding: 11px 14px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-1);
   font-family: "DM Sans", sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   outline: none;
   transition: all 0.2s;
   box-sizing: border-box;
+  appearance: none;
 }
 
-.input-group input::placeholder {
+.input-group input::placeholder,
+.input-group textarea::placeholder {
   color: var(--text-3);
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--accent-glow);
+  box-shadow: 0 0 0 3px var(--accent-glow);
   background: #fff;
-  transform: translateY(-1px);
+}
+
+.input-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a8c0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.input-group textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
 }
 
 /* ── Password Container ──────────────────────────── */
@@ -419,13 +454,13 @@
 }
 
 .password-container input {
-  padding-right: 48px;
+  padding-right: 44px;
   width: 100%;
 }
 
 .eye-btn {
   position: absolute;
-  right: 14px;
+  right: 12px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -440,59 +475,32 @@
   color: var(--accent);
 }
 
-/* ── Submit Button ───────────────────────────────── */
-.submit-btn {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
-  border: none;
-  border-radius: var(--radius-sm);
-  color: #fff;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    opacity 0.2s,
-    transform 0.2s,
-    box-shadow 0.2s;
-  margin-top: 4px;
-  letter-spacing: 0.01em;
-  position: relative;
-  overflow: hidden;
+/* ── Error / Validation ──────────────────────────── */
+.req {
+  color: var(--danger);
+  margin-left: 2px;
 }
 
-.submit-btn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
+.field-error {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--danger);
+  letter-spacing: 0.02em;
 }
 
-.submit-btn:hover:not(:disabled) {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 28px rgba(75, 159, 225, 0.4);
+input.input-error,
+select.input-error {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3px var(--danger-soft);
 }
 
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ── Error Message ───────────────────────────────── */
 .error-msg {
   font-size: 13px;
   color: var(--danger);
   text-align: center;
   margin: 0;
   padding: 11px 16px;
-  background: rgba(224, 92, 106, 0.06);
+  background: var(--danger-soft);
   border: 1px solid rgba(224, 92, 106, 0.2);
   border-radius: var(--radius-sm);
   animation: shake 0.3s ease;
@@ -511,97 +519,95 @@
   }
 }
 
-/* ── Dark Theme ──────────────────────────────────── */
-:host-context(body.dark) {
-  --bg: #0e1117;
-  --surface: #161b27;
-  --border: #252d40;
-  --border-soft: #1e2636;
-  --accent: #4f7ef8;
-  --accent-dark: #3a6be0;
-  --accent-soft: rgba(79, 126, 248, 0.1);
-  --accent-glow: rgba(79, 126, 248, 0.2);
-  --text-1: #e2e8f4;
-  --text-2: #7e8fb5;
-  --text-3: #445070;
-  --danger: #e05c6a;
+/* ── Submit Button ───────────────────────────────── */
+.submit-btn {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+  letter-spacing: 0.01em;
 }
 
-:host-context(body.dark) .left-panel {
-  background: linear-gradient(145deg, #0a0e1a 0%, #0e1525 50%, #111d35 100%);
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(75, 159, 225, 0.4);
 }
 
-:host-context(body.dark) .left-panel::after {
-  background: radial-gradient(
-    ellipse,
-    rgba(79, 126, 248, 0.06) 0%,
-    transparent 70%
-  );
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-:host-context(body.dark) .stat-card {
-  background: rgba(79, 126, 248, 0.07);
-  border-color: rgba(79, 126, 248, 0.18);
+/* ── Sign-in link ────────────────────────────────── */
+.signin-link {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-3);
+  margin: 0;
 }
 
-:host-context(body.dark) .stat-card:hover {
-  background: rgba(79, 126, 248, 0.12);
+.signin-link a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
 }
 
-:host-context(body.dark) .theme-toggle {
-  background: rgba(79, 126, 248, 0.1);
-  border-color: rgba(79, 126, 248, 0.25);
-  color: #7e8fb5;
+.signin-link a:hover {
+  text-decoration: underline;
 }
 
-:host-context(body.dark) .theme-toggle:hover {
-  border-color: #4f7ef8;
-  color: #4f7ef8;
+/* ── Success Card ────────────────────────────────── */
+.success-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  margin: auto 0;
 }
 
-:host-context(body.dark) .right-panel {
-  background: #161b27;
-  border-left-color: #252d40;
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--success-soft);
+  border: 1px solid rgba(60, 185, 122, 0.25);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-:host-context(body.dark) .right-panel::after {
-  background: linear-gradient(to top, rgba(79, 126, 248, 0.04), transparent);
+.success-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0;
+  letter-spacing: -0.02em;
 }
 
-:host-context(body.dark) .input-group input {
-  background: #111520;
-  border-color: #252d40;
-  color: #e2e8f4;
+.success-body {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin: 0 0 8px;
 }
 
-:host-context(body.dark) .input-group input:focus {
-  background: #1c2333;
-  border-color: #4f7ef8;
-}
-
-:host-context(body.dark) .login-wrapper::before {
-  background: linear-gradient(90deg, #3a6be0, #4f7ef8);
-}
-
-/* ── Responsive ──────────────────────────────────── */
-@media (max-width: 900px) {
-  .left-panel {
-    display: none;
-  }
-  .login-wrapper::before {
-    left: 0;
-  }
-
-  .right-panel {
-    border-left: none;
-    padding: 40px 24px;
-  }
-
-  .login-card {
-    max-width: 100%;
-  }
-}
-/* ── Full Width ECG Lines ─────────────────────────── */
+/* ── Full Width ECG ──────────────────────────────── */
 .fullwidth-ecg {
   position: absolute;
   left: 0;
@@ -616,12 +622,10 @@
 .top-ecg {
   top: 80px;
 }
-
 .bottom-ecg {
   top: auto;
   bottom: 40px;
 }
-
 .fullwidth-ecg svg {
   width: 100%;
   height: 30px;
@@ -640,7 +644,6 @@
 
 .bottom-ecg .fw-ecg-line {
   animation: fw-ecg-scroll 8s linear infinite;
-  animation-delay: 0s;
   stroke: rgba(2, 121, 71, 0.5);
 }
 
@@ -660,19 +663,81 @@
     opacity: 0;
   }
 }
-.signin-link {
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-3);
-  margin: 0;
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .left-panel {
+    display: none;
+  }
+  .login-wrapper::before {
+    left: 0;
+  }
+  .right-panel {
+    border-left: none;
+  }
+  .form-scroll {
+    padding: 40px 24px 60px;
+  }
+  .field-row {
+    grid-template-columns: 1fr;
+  }
 }
 
-.signin-link a {
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 500;
+/* ── Dark Theme ──────────────────────────────────── */
+:host-context(body.dark) {
+  --bg: #0e1117;
+  --surface: #161b27;
+  --border: #252d40;
+  --border-soft: #1e2636;
+  --accent: #4f7ef8;
+  --accent-dark: #3a6be0;
+  --accent-soft: rgba(79, 126, 248, 0.1);
+  --accent-glow: rgba(79, 126, 248, 0.2);
+  --text-1: #e2e8f4;
+  --text-2: #7e8fb5;
+  --text-3: #445070;
 }
 
-.signin-link a:hover {
-  text-decoration: underline;
+:host-context(body.dark) .left-panel {
+  background: linear-gradient(145deg, #0a0e1a 0%, #0e1525 50%, #111d35 100%);
+}
+
+:host-context(body.dark) .stat-card {
+  background: rgba(79, 126, 248, 0.07);
+  border-color: rgba(79, 126, 248, 0.18);
+}
+
+:host-context(body.dark) .theme-toggle {
+  background: rgba(79, 126, 248, 0.1);
+  border-color: rgba(79, 126, 248, 0.25);
+  color: #7e8fb5;
+}
+
+:host-context(body.dark) .theme-toggle:hover {
+  border-color: #4f7ef8;
+  color: #4f7ef8;
+}
+
+:host-context(body.dark) .right-panel {
+  background: #161b27;
+  border-left-color: #252d40;
+}
+
+:host-context(body.dark) .input-group input,
+:host-context(body.dark) .input-group select,
+:host-context(body.dark) .input-group textarea {
+  background: #111520;
+  border-color: #252d40;
+  color: #e2e8f4;
+}
+
+:host-context(body.dark) .input-group input:focus,
+:host-context(body.dark) .input-group select:focus,
+:host-context(body.dark) .input-group textarea:focus {
+  background: #1c2333;
+  border-color: #4f7ef8;
+}
+
+:host-context(body.dark) .login-wrapper::before {
+  background: linear-gradient(90deg, #3a6be0, #4f7ef8);
 }

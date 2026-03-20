@@ -19,4 +19,7 @@ export class AdminPatientsService {
       payload,
     );
   }
+  getPatients(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiBaseUrl}/api/patients`);
+  }
 }
