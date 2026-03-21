@@ -1,33 +1,101 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DoctorAppointmentsService } from '../doctor-appointments.service';
+import { forkJoin } from 'rxjs';
+import { DoctorService } from '../doctor.service';
 import { Appointment } from '../../../shared/models/appointment.model';
-import { AppointmentStatus } from '../../../shared/enums/appointment-status.enum';
+
+interface StatCard {
+  label: string;
+  value: number;
+  icon: 'patients' | 'today' | 'upcoming' | 'completed';
+  colorClass: 'accent' | 'warning' | 'info' | 'success';
+}
+
+const STATUS_MAP: Record<number, { label: string; css: string }> = {
+  1: { label: 'Pending', css: 'status-pending' },
+  2: { label: 'Confirmed', css: 'status-confirmed' },
+  3: { label: 'Completed', css: 'status-completed' },
+  4: { label: 'Cancelled', css: 'status-cancelled' },
+  5: { label: 'No Show', css: 'status-noshow' },
+};
 
 @Component({
   selector: 'app-doctor-dashboard',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css',
 })
 export class DoctorDashboardComponent implements OnInit {
-  appointments: Appointment[] = [];
+  private service = inject(DoctorService);
+
+  profile: any = null;
   loading = true;
+  stats: StatCard[] = [];
+  recentAppointments: Appointment[] = [];
 
-  constructor(private service: DoctorAppointmentsService) {}
+  private today = new Date().toISOString().split('T')[0];
 
-  ngOnInit() {
-    console.log('DOCTOR DASHBOARD LOADED');
-    this.loadAppointments();
+  get greeting(): string {
+    const h = new Date().getHours();
+    if (h < 12) return 'morning';
+    if (h < 17) return 'afternoon';
+    return 'evening';
   }
 
-  loadAppointments() {
-    this.loading = true;
+  ngOnInit() {
+    // Profile is already fetched by the layout — just read it
+    this.service.profile$.subscribe((p) => {
+      if (p) this.profile = p;
+    });
 
-    this.service.getMyAppointments().subscribe({
-      next: (res) => {
-        console.log('DOCTOR DATA:', res);
-        this.appointments = res;
+    forkJoin({
+      appointments: this.service.getMyAppointments(),
+      patients: this.service.getMyPatients(),
+    }).subscribe({
+      next: ({ appointments, patients }) => {
+        const todayCount = appointments.filter((a) =>
+          a.appointmentDate?.startsWith(this.today),
+        ).length;
+        const pending = appointments.filter((a) => a.status === 1).length;
+        const confirmed = appointments.filter((a) => a.status === 2).length;
+        const completed = appointments.filter((a) => a.status === 3).length;
+
+        this.stats = [
+          {
+            label: 'Total Patients',
+            value: patients.length,
+            icon: 'patients',
+            colorClass: 'accent',
+          },
+          {
+            label: "Today's Appointments",
+            value: todayCount,
+            icon: 'today',
+            colorClass: 'warning',
+          },
+          {
+            label: 'Pending / Confirmed',
+            value: pending + confirmed,
+            icon: 'upcoming',
+            colorClass: 'info',
+          },
+          {
+            label: 'Completed (All Time)',
+            value: completed,
+            icon: 'completed',
+            colorClass: 'success',
+          },
+        ];
+
+        this.recentAppointments = [...appointments]
+          .sort(
+            (a, b) =>
+              new Date(b.appointmentDate).getTime() -
+              new Date(a.appointmentDate).getTime(),
+          )
+          .slice(0, 8);
+
         this.loading = false;
       },
       error: () => {
@@ -36,33 +104,16 @@ export class DoctorDashboardComponent implements OnInit {
     });
   }
 
-  updateStatus(id: number, status: number) {
-    this.service
-      .updateStatus(id, status)
-      .subscribe(() => this.loadAppointments());
+  getStatus(status: number) {
+    return STATUS_MAP[status] ?? { label: 'Unknown', css: '' };
   }
-  getStatusClass(status: number): string {
-    switch (status) {
-      case AppointmentStatus.Scheduled:
-        return 'scheduled';
-      case AppointmentStatus.Completed:
-        return 'completed';
-      case AppointmentStatus.Cancelled:
-        return 'cancelled';
-      default:
-        return '';
-    }
-  }
-  getStatusText(status: number): string {
-    switch (status) {
-      case AppointmentStatus.Scheduled:
-        return 'Scheduled';
-      case AppointmentStatus.Completed:
-        return 'Completed';
-      case AppointmentStatus.Cancelled:
-        return 'Cancelled';
-      default:
-        return 'Unknown';
-    }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return '—';
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
   }
 }

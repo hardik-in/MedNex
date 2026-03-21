@@ -41,5 +41,6 @@ namespace DoctorPatientApp.API.Models.Entities
         public Admin? Admin { get; set; }
         public Doctor? Doctor { get; set; }
         public Patient? Patient { get; set; }
+        public string? ReferenceId { get; set; }
     }
 }

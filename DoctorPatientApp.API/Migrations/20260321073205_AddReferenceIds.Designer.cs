@@ -4,6 +4,7 @@ using DoctorPatientApp.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DoctorPatientApp.API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260321073205_AddReferenceIds")]
+    partial class AddReferenceIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,9 +55,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -64,9 +64,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId")
-                        .IsUnique();
-
-                    b.HasIndex("ReferenceId")
                         .IsUnique();
 
                     b.HasIndex("UserId")
@@ -122,9 +119,6 @@ namespace DoctorPatientApp.API.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time(6)");
 
@@ -142,9 +136,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("ReferenceId")
-                        .IsUnique();
 
                     b.HasIndex("TimeSlotId")
                         .IsUnique();
@@ -194,9 +185,6 @@ namespace DoctorPatientApp.API.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("Specialization")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -213,9 +201,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasIndex("AssignedAdminId");
 
                     b.HasIndex("LicenseNumber")
-                        .IsUnique();
-
-                    b.HasIndex("ReferenceId")
                         .IsUnique();
 
                     b.HasIndex("UserId")
@@ -286,9 +271,6 @@ namespace DoctorPatientApp.API.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("Symptoms")
                         .IsRequired()
                         .HasMaxLength(2000)
@@ -318,9 +300,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("ReferenceId")
-                        .IsUnique();
 
                     b.ToTable("MedicalRecords");
                 });
@@ -365,9 +344,6 @@ namespace DoctorPatientApp.API.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("varchar(5000)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -375,9 +351,6 @@ namespace DoctorPatientApp.API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReferenceId")
-                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -451,9 +424,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.Property<DateTime>("PrescribedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime(6)");
 
@@ -469,9 +439,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasIndex("MedicalRecordId");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("ReferenceId")
-                        .IsUnique();
 
                     b.ToTable("Prescriptions");
                 });
@@ -505,9 +472,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time(6)");
 
@@ -520,9 +484,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
-
-                    b.HasIndex("ReferenceId")
-                        .IsUnique();
 
                     b.ToTable("TimeSlots");
                 });
@@ -585,9 +546,6 @@ namespace DoctorPatientApp.API.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("varchar(15)");
 
-                    b.Property<string>("ReferenceId")
-                        .HasColumnType("varchar(255)");
-
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
@@ -597,9 +555,6 @@ namespace DoctorPatientApp.API.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("ReferenceId")
                         .IsUnique();
 
                     b.ToTable("Users");

@@ -58,5 +58,6 @@ namespace DoctorPatientApp.API.Models.Entities
 
         [ForeignKey("MedicalRecordId")]
         public MedicalRecord? MedicalRecord { get; set; }
+        public string? ReferenceId { get; set; }
     }
 }

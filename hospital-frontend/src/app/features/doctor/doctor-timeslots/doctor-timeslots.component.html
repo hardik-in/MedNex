@@ -1,0 +1,171 @@
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <span class="eyebrow">Schedule</span>
+    <h1 class="page-title">My Timeslots</h1>
+    <p class="page-sub">
+      View your availability. Booked slots cannot be deleted.
+    </p>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <input
+      class="date-input"
+      type="date"
+      [(ngModel)]="dateFilter"
+      (ngModelChange)="onDateChange()"
+    />
+
+    <select
+      class="filter-select"
+      [(ngModel)]="statusFilter"
+      (ngModelChange)="applyFilters()"
+    >
+      <option [ngValue]="0">All Statuses</option>
+      <option [ngValue]="1">Available</option>
+      <option [ngValue]="2">Booked</option>
+      <option [ngValue]="3">Blocked</option>
+    </select>
+
+    <button
+      class="toggle-btn"
+      [class.active]="showTodayOnly"
+      (click)="onTodayToggle()"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+      Today
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading timeslots…</span>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && filtered.length === 0" class="empty-state">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 15 15" />
+    </svg>
+    <p>No timeslots found.</p>
+    <button *ngIf="showTodayOnly" class="link-btn" (click)="onTodayToggle()">
+      Show all dates
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="!loading && filtered.length > 0" class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let slot of filtered"
+          [class.row-booked]="slot.status === 2"
+        >
+          <td class="td-date">{{ formatDate(slot.date) }}</td>
+          <td class="td-time">{{ slot.startTime }}</td>
+          <td class="td-time">{{ slot.endTime }}</td>
+          <td class="td-duration">{{ slot.durationMinutes }} min</td>
+          <td>
+            <span class="slot-badge" [ngClass]="getSlotStatus(slot.status).css">
+              {{ getSlotStatus(slot.status).label }}
+            </span>
+          </td>
+          <td class="td-action">
+            <button
+              *ngIf="canDelete(slot.status)"
+              class="delete-btn"
+              title="Delete slot"
+              (click)="confirmDelete(slot)"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14H6L5 6" />
+                <path d="M10 11v6M14 11v6" />
+                <path d="M9 6V4h6v2" />
+              </svg>
+            </button>
+            <span
+              *ngIf="!canDelete(slot.status)"
+              class="td-locked"
+              title="Booked slots cannot be deleted"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading" class="results-count">
+    {{ filtered.length }} slot{{ filtered.length !== 1 ? "s" : "" }}
+  </div>
+</div>
+
+<!-- ── Delete Confirmation ── -->
+<div *ngIf="slotToDelete" class="modal-backdrop" (click)="cancelDelete()">
+  <div class="confirm-modal" (click)="$event.stopPropagation()">
+    <div class="confirm-icon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6l-1 14H6L5 6" />
+        <path d="M10 11v6M14 11v6" />
+        <path d="M9 6V4h6v2" />
+      </svg>
+    </div>
+    <h3 class="confirm-title">Delete Timeslot?</h3>
+    <p class="confirm-body">
+      <strong>{{ slotToDelete.label }}</strong> will be permanently deleted.
+    </p>
+    <div class="confirm-actions">
+      <button class="btn btn-muted" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-danger" (click)="deleteSlot()">Delete</button>
+    </div>
+  </div>
+</div>

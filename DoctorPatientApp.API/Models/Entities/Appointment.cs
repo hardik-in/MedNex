@@ -51,5 +51,6 @@ namespace DoctorPatientApp.API.Models.Entities
 
         public MedicalRecord? MedicalRecord { get; set; }
         public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public string? ReferenceId { get; set; }
     }
 }

@@ -29,5 +29,6 @@ namespace DoctorPatientApp.API.Models.Entities
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
         public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public string? ReferenceId { get; set; }
     }
 }

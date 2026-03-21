@@ -220,16 +220,113 @@
         <div
           class="record-item"
           *ngFor="let m of medicalRecords; let i = index"
+          [class.expanded]="expandedRecordId === m.id"
+          (click)="toggleRecord(m.id)"
         >
-          <div class="record-index">#{{ i + 1 }}</div>
-          <div class="record-body">
-            <div class="record-field">
-              <span class="info-label">Diagnosis</span>
-              <span class="record-value">{{ m.diagnosis }}</span>
+          <!-- Row summary (always visible) -->
+          <div class="record-summary">
+            <div class="record-index">#{{ i + 1 }}</div>
+            <div class="record-summary-body">
+              <span class="record-diagnosis">{{ m.diagnosis }}</span>
+              <span class="record-meta">
+                {{ m.appointmentDate | date: "mediumDate" }} &bull; Dr.
+                {{ m.doctorName }}
+              </span>
             </div>
-            <div class="record-field" *ngIf="m.notes">
-              <span class="info-label">Notes</span>
-              <span class="record-value record-notes">{{ m.notes }}</span>
+            <div class="record-chevron">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                [style.transform]="
+                  expandedRecordId === m.id ? 'rotate(180deg)' : 'rotate(0deg)'
+                "
+                style="transition: transform 0.2s"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Expanded detail (shown on click) -->
+          <div
+            class="record-detail"
+            *ngIf="expandedRecordId === m.id"
+            (click)="$event.stopPropagation()"
+          >
+            <div class="detail-grid">
+              <div class="detail-field" *ngIf="m.symptoms">
+                <span class="info-label">Symptoms</span>
+                <span class="record-value">{{ m.symptoms }}</span>
+              </div>
+              <div class="detail-field" *ngIf="m.treatment">
+                <span class="info-label">Treatment</span>
+                <span class="record-value">{{ m.treatment }}</span>
+              </div>
+              <div class="detail-field" *ngIf="m.doctorNotes">
+                <span class="info-label">Doctor Notes</span>
+                <span class="record-value record-notes">{{
+                  m.doctorNotes
+                }}</span>
+              </div>
+              <div class="detail-field" *ngIf="m.labTestResults">
+                <span class="info-label">Lab Test Results</span>
+                <span class="record-value">{{ m.labTestResults }}</span>
+              </div>
+              <div class="detail-field" *ngIf="m.recommendations">
+                <span class="info-label">Recommendations</span>
+                <span class="record-value">{{ m.recommendations }}</span>
+              </div>
+              <div class="detail-field" *ngIf="m.followUpDate">
+                <span class="info-label">Follow-up Date</span>
+                <span class="record-value">{{
+                  m.followUpDate | date: "mediumDate"
+                }}</span>
+              </div>
+            </div>
+
+            <!-- Vitals -->
+            <div
+              class="vitals-row"
+              *ngIf="
+                m.temperature ||
+                m.heartRate ||
+                m.bloodPressureSystolic ||
+                m.weight ||
+                m.height
+              "
+            >
+              <span class="info-label" style="grid-column: 1/-1">Vitals</span>
+              <div class="vital-chip" *ngIf="m.temperature">
+                <span class="vital-label">Temp</span>
+                <span class="vital-value">{{ m.temperature }}°F</span>
+              </div>
+              <div class="vital-chip" *ngIf="m.bloodPressureSystolic">
+                <span class="vital-label">BP</span>
+                <span class="vital-value"
+                  >{{ m.bloodPressureSystolic }}/{{
+                    m.bloodPressureDiastolic
+                  }}
+                  mmHg</span
+                >
+              </div>
+              <div class="vital-chip" *ngIf="m.heartRate">
+                <span class="vital-label">Heart Rate</span>
+                <span class="vital-value">{{ m.heartRate }} bpm</span>
+              </div>
+              <div class="vital-chip" *ngIf="m.weight">
+                <span class="vital-label">Weight</span>
+                <span class="vital-value">{{ m.weight }} kg</span>
+              </div>
+              <div class="vital-chip" *ngIf="m.height">
+                <span class="vital-label">Height</span>
+                <span class="vital-value">{{ m.height }} cm</span>
+              </div>
             </div>
           </div>
         </div>

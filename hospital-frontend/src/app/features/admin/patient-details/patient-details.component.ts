@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AdminPatientsService } from '../admin-patients.service.ts.service';
+import { forkJoin } from 'rxjs';
 
 const STATUS_MAP: Record<number, { label: string; css: string }> = {
   1: { label: 'Pending', css: 'status-pending' },
@@ -22,6 +23,7 @@ export class PatientDetailsComponent implements OnInit {
   patient: any;
   appointments: any[] = [];
   medicalRecords: any[] = [];
+  loading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -32,10 +34,21 @@ export class PatientDetailsComponent implements OnInit {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.service.getPatient(id).subscribe((res) => {
-      this.patient = res;
-      this.appointments = res.appointments ?? [];
-      this.medicalRecords = res.medicalRecords ?? [];
+    forkJoin({
+      patient: this.service.getPatient(id),
+      appointments: this.service.getPatientAppointments(id),
+      medicalRecords: this.service.getPatientMedicalRecords(id),
+    }).subscribe({
+      next: (res) => {
+        this.patient = res.patient;
+        this.appointments = res.appointments;
+        this.medicalRecords = res.medicalRecords;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load patient details', err);
+        this.loading = false;
+      },
     });
   }
 
@@ -46,5 +59,10 @@ export class PatientDetailsComponent implements OnInit {
 
   getStatus(status: number): { label: string; css: string } {
     return STATUS_MAP[status] ?? { label: 'Unknown', css: '' };
+  }
+  expandedRecordId: number | null = null;
+
+  toggleRecord(id: number) {
+    this.expandedRecordId = this.expandedRecordId === id ? null : id;
   }
 }

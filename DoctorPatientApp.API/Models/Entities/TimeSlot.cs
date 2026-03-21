@@ -26,5 +26,6 @@ namespace DoctorPatientApp.API.Models.Entities
         [ForeignKey("DoctorId")]
         public Doctor Doctor { get; set; }
         public Appointment? Appointment { get; set; }
+        public string? ReferenceId { get; set; }
     }
 }

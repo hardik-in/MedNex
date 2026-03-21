@@ -49,8 +49,8 @@ export class PatientDashboardComponent implements OnInit {
   }
   getStatusClass(status: number): string {
     switch (status) {
-      case AppointmentStatus.Scheduled:
-        return 'scheduled';
+      case AppointmentStatus.Pending:
+        return 'Pending';
       case AppointmentStatus.Completed:
         return 'completed';
       case AppointmentStatus.Cancelled:
@@ -61,8 +61,8 @@ export class PatientDashboardComponent implements OnInit {
   }
   getStatusText(status: number): string {
     switch (status) {
-      case AppointmentStatus.Scheduled:
-        return 'Scheduled';
+      case AppointmentStatus.Pending:
+        return 'Pending';
       case AppointmentStatus.Completed:
         return 'Completed';
       case AppointmentStatus.Cancelled:

@@ -152,5 +152,33 @@ namespace DoctorPatientApp.API.Controllers
             var patients = await _doctorService.GetDoctorPatientsAsync(doctorId);
             return Ok(patients);
         }
+
+        [HttpGet("my")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            try
+            {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                var doctor = await _doctorService.GetDoctorByUserIdAsync(userId);
+                return Ok(doctor);
+            }
+            catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+        }
+
+        [HttpGet("my/patients")]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> GetMyPatients()
+        {
+            try
+            {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                var doctor = await _doctorService.GetDoctorByUserIdAsync(userId);
+                var patients = await _doctorService.GetDoctorPatientsAsync(doctor.Id);
+                return Ok(patients);
+            }
+            catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+        }
     }
 }

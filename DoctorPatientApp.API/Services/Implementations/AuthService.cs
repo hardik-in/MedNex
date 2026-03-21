@@ -1,8 +1,11 @@
-﻿using DoctorPatientApp.API.DTOs.Auth;
+﻿using DoctorPatientApp.API.Data;
+using DoctorPatientApp.API.DTOs.Auth;
 using DoctorPatientApp.API.Models.Entities;
 using DoctorPatientApp.API.Models.Enums;
 using DoctorPatientApp.API.Repositories.Interfaces;
 using DoctorPatientApp.API.Services.Interfaces;
+using DoctorPatientApp.API.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoctorPatientApp.API.Services.Implementations
 {
@@ -14,6 +17,7 @@ namespace DoctorPatientApp.API.Services.Implementations
         private readonly IPatientRepository _patientRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenService _tokenService;
+        private readonly ApplicationDbContext _context;
 
         public AuthService(
             IUserRepository userRepository,
@@ -21,7 +25,8 @@ namespace DoctorPatientApp.API.Services.Implementations
             IDoctorRepository doctorRepository,
             IPatientRepository patientRepository,
             IPasswordHasher passwordHasher,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            ApplicationDbContext context)
         {
             _userRepository = userRepository;
             _adminRepository = adminRepository;
@@ -29,35 +34,28 @@ namespace DoctorPatientApp.API.Services.Implementations
             _patientRepository = patientRepository;
             _passwordHasher = passwordHasher;
             _tokenService = tokenService;
+            _context = context;
         }
-
 
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto loginRequest)
         {
-            // Find user by email
             var user = await _userRepository.GetByEmailAsync(loginRequest.Email);
 
             if (user == null)
                 throw new UnauthorizedAccessException("Invalid email or password");
 
-            // Verify password
             var isPasswordValid = _passwordHasher.Verify(loginRequest.Password, user.PasswordHash);
 
             if (!isPasswordValid)
                 throw new UnauthorizedAccessException("Invalid email or password");
 
-            // Check if user is active
             if (!user.IsActive)
                 throw new UnauthorizedAccessException("Account is deactivated");
 
-            // Update last login
-            // Capture BEFORE overwriting
             var lastLoginAt = user.LastLoginAt;
-
             user.LastLoginAt = DateTime.UtcNow;
             await _userRepository.UpdateAsync(user);
 
-            // Generate JWT token
             var token = _tokenService.GenerateToken(user);
 
             return new LoginResponseDto
@@ -68,7 +66,7 @@ namespace DoctorPatientApp.API.Services.Implementations
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Role = user.Role.ToString(),
-                ExpiresAt = DateTime.UtcNow.AddMinutes(1440), // 24 hours
+                ExpiresAt = DateTime.UtcNow.AddMinutes(1440),
                 LastLoginAt = lastLoginAt
             };
         }
@@ -83,7 +81,13 @@ namespace DoctorPatientApp.API.Services.Implementations
 
             try
             {
+                var year = DateTime.UtcNow.Year;
                 var passwordHash = _passwordHasher.Hash(registerRequest.Password);
+
+                // ── User ReferenceId ──────────────────────────────────────
+                var userCount = await _context.Users
+                    .IgnoreQueryFilters()
+                    .CountAsync(u => u.CreatedAt.Year == year);
 
                 var user = new User
                 {
@@ -96,7 +100,8 @@ namespace DoctorPatientApp.API.Services.Implementations
                     Gender = registerRequest.Gender,
                     DateOfBirth = registerRequest.DateOfBirth,
                     Address = registerRequest.Address,
-                    IsActive = true
+                    IsActive = true,
+                    ReferenceId = ReferenceIdGenerator.Generate("USR", year, userCount + 1)
                 };
 
                 var createdUser = await _userRepository.AddAsync(user);
@@ -104,33 +109,42 @@ namespace DoctorPatientApp.API.Services.Implementations
                 switch (registerRequest.Role)
                 {
                     case UserRole.Admin:
+                        // ── Admin ReferenceId ─────────────────────────────
+                        var adminCount = await _context.Admins
+                            .IgnoreQueryFilters()
+                            .CountAsync(a => a.CreatedAt.Year == year);
+
                         var admin = new Admin
                         {
                             UserId = createdUser.Id,
-
                             Department = string.IsNullOrWhiteSpace(registerRequest.Department)
                                 ? "Administration"
                                 : registerRequest.Department,
-
                             EmployeeId = string.IsNullOrWhiteSpace(registerRequest.EmployeeId)
                                 ? $"ADM-{createdUser.Id}"
-                                : registerRequest.EmployeeId
+                                : registerRequest.EmployeeId,
+                            ReferenceId = ReferenceIdGenerator.Generate("ADM", year, adminCount + 1)
                         };
 
                         await _adminRepository.AddAsync(admin);
                         break;
 
                     case UserRole.Patient:
+                        // ── Patient ReferenceId ───────────────────────────
+                        var patientCount = await _context.Patients
+                            .IgnoreQueryFilters()
+                            .CountAsync(p => p.CreatedAt.Year == year);
+
                         var patient = new Patient
                         {
-                            UserId = createdUser.Id
+                            UserId = createdUser.Id,
+                            ReferenceId = ReferenceIdGenerator.Generate("PAT", year, patientCount + 1)
                         };
 
                         await _patientRepository.AddAsync(patient);
                         break;
 
                     case UserRole.Doctor:
-                        // 🚫 Doctors must be created via DoctorService.CreateDoctorAsync
                         throw new InvalidOperationException(
                             "Doctor accounts must be created via the Doctor creation endpoint.");
                 }
@@ -151,6 +165,5 @@ namespace DoctorPatientApp.API.Services.Implementations
                 throw;
             }
         }
-
     }
 }

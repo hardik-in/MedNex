@@ -73,4 +73,18 @@ public class TimeSlotsController : ControllerBase
         await _timeSlotService.DeleteSlotAsync(id);
         return NoContent();
     }
+
+    [HttpGet("my")]
+    [Authorize(Roles = "Doctor")]
+    public async Task<IActionResult> GetMySlots()
+    {
+        try
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var doctor = await _doctorService.GetDoctorByUserIdAsync(userId);
+            var slots = await _timeSlotService.GetSlotsByDoctorAsync(doctor.Id);
+            return Ok(slots);
+        }
+        catch (Exception ex) { return BadRequest(new { message = ex.Message }); }
+    }   
 }

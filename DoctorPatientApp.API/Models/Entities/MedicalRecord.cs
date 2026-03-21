@@ -59,5 +59,6 @@ namespace DoctorPatientApp.API.Models.Entities
         public Appointment Appointment { get; set; }
 
         public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public string? ReferenceId { get; set; }
     }
 }

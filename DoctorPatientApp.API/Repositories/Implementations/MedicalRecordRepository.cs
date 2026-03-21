@@ -27,6 +27,8 @@ namespace DoctorPatientApp.API.Repositories.Implementations
         public async Task<IEnumerable<MedicalRecord>> GetRecordsByPatientAsync(int patientId)
         {
             return await _dbSet
+                .Include(mr => mr.Patient)       // 👈 added
+                    .ThenInclude(p => p.User)    // 👈 added
                 .Include(mr => mr.Doctor)
                     .ThenInclude(d => d.User)
                 .Include(mr => mr.Appointment)

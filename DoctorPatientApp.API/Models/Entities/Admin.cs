@@ -20,6 +20,7 @@ namespace DoctorPatientApp.API.Models.Entities
 
         [ForeignKey("UserId")]
         public User User { get; set; }
-        public virtual ICollection<Doctor> ManagedDoctors { get; set; } = new List<Doctor>();  
+        public virtual ICollection<Doctor> ManagedDoctors { get; set; } = new List<Doctor>();
+        public string? ReferenceId { get; set; }
     }
 }

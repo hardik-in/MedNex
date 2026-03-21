@@ -250,5 +250,19 @@ public async Task<IActionResult> GetMyAppointments()
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [HttpGet("patient/{patientId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAppointmentsByPatient(int patientId)
+        {
+            try
+            {
+                var appointments = await _appointmentService.GetAppointmentsByPatientAsync(patientId);
+                return Ok(appointments);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
