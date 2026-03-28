@@ -1,0 +1,306 @@
+<div class="page-wrapper">
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading profile…</p>
+  </div>
+
+  <ng-container *ngIf="!loading && profile">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="header-left">
+        <span class="eyebrow">Doctor Portal</span>
+        <h1 class="page-title">My Profile</h1>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" *ngIf="isEditMode" (click)="cancelEdit()">
+          Cancel
+        </button>
+        <button
+          class="btn-primary"
+          *ngIf="!isEditMode"
+          (click)="enterEditMode()"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+            />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+          Edit Profile
+        </button>
+        <button
+          class="btn-primary"
+          *ngIf="isEditMode"
+          (click)="requestConfirm()"
+          [disabled]="saving"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          {{ saving ? "Saving…" : "Save Changes" }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Hero -->
+    <div class="profile-hero">
+      <div class="avatar-ring">
+        <div class="avatar">
+          {{ profile.firstName?.[0] }}{{ profile.lastName?.[0] }}
+        </div>
+      </div>
+      <div class="hero-info">
+        <h2 class="doctor-name">
+          Dr. {{ profile.firstName }} {{ profile.lastName }}
+        </h2>
+        <p class="doctor-spec">{{ profile.specialization || "—" }}</p>
+        <div class="hero-tags">
+          <span class="tag tag-exp" *ngIf="profile.yearsOfExperience">
+            {{ profile.yearsOfExperience }} yrs experience
+          </span>
+          <span class="tag tag-fee" *ngIf="profile.consultationFee">
+            {{ formatFee(profile.consultationFee) }} / visit
+          </span>
+          <span
+            class="tag"
+            [class.tag-active]="profile.isActive"
+            [class.tag-inactive]="!profile.isActive"
+          >
+            {{ profile.isActive ? "Active" : "Inactive" }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── VIEW MODE ─── -->
+    <ng-container *ngIf="!isEditMode">
+      <!-- Personal Information -->
+      <div class="section-block">
+        <div class="section-label">Personal Information</div>
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ profile.email || "—" }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ profile.phoneNumber || "—" }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Gender</span>
+            <span class="info-value">{{ getGender(profile.gender) }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Date of Birth</span>
+            <span class="info-value">{{
+              formatDate(profile.dateOfBirth)
+            }}</span>
+          </div>
+          <div class="info-card info-card--wide">
+            <span class="info-label">Address</span>
+            <span class="info-value">{{ profile.address || "—" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Information -->
+      <div class="section-block">
+        <div class="section-label">Professional Information</div>
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-label">License Number</span>
+            <span class="info-value mono">{{
+              profile.licenseNumber || "—"
+            }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Specialization</span>
+            <span class="info-value">{{ profile.specialization || "—" }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Years of Experience</span>
+            <span class="info-value">{{
+              profile.yearsOfExperience ?? "—"
+            }}</span>
+          </div>
+          <div class="info-card">
+            <span class="info-label">Consultation Fee</span>
+            <span class="info-value accent">{{
+              formatFee(profile.consultationFee)
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio -->
+      <div class="section-block" *ngIf="profile.bio">
+        <div class="section-label">Bio</div>
+        <div class="text-block">{{ profile.bio }}</div>
+      </div>
+      <div class="section-block" *ngIf="!profile.bio">
+        <div class="section-label">Bio</div>
+        <div class="empty-text">
+          No bio added yet. Click Edit Profile to add one.
+        </div>
+      </div>
+
+      <!-- Qualifications -->
+      <div class="section-block" *ngIf="profile.qualifications">
+        <div class="section-label">Qualifications</div>
+        <div class="text-block">{{ profile.qualifications }}</div>
+      </div>
+      <div class="section-block" *ngIf="!profile.qualifications">
+        <div class="section-label">Qualifications</div>
+        <div class="empty-text">No qualifications added yet.</div>
+      </div>
+
+      <!-- Admin Info -->
+      <div class="section-block">
+        <div class="section-label">Account</div>
+        <div class="info-grid">
+          <div class="info-card">
+            <span class="info-label">Assigned Admin</span>
+            <span class="info-value">{{
+              profile.assignedAdminName || "—"
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ─── EDIT MODE ─── -->
+    <ng-container *ngIf="isEditMode">
+      <form [formGroup]="form" (ngSubmit)="requestConfirm()" novalidate>
+        <div class="section-block">
+          <div class="section-label">Professional Information</div>
+          <div class="edit-note">
+            Personal details and credentials can only be changed by an admin.
+          </div>
+
+          <div class="form-grid">
+            <!-- Phone Number -->
+            <div class="form-group">
+              <label class="form-label"
+                >Phone Number <span class="req">*</span></label
+              >
+              <input
+                type="tel"
+                class="form-input"
+                [class.input-error]="
+                  f['phoneNumber'].invalid &&
+                  (f['phoneNumber'].touched || submitted)
+                "
+                formControlName="phoneNumber"
+                placeholder="e.g. +1 555-4001"
+              />
+              <span
+                class="field-error"
+                *ngIf="
+                  f['phoneNumber'].invalid &&
+                  (f['phoneNumber'].touched || submitted)
+                "
+              >
+                Enter a valid phone number.
+              </span>
+            </div>
+
+            <!-- Consultation Fee -->
+            <div class="form-group">
+              <label class="form-label"
+                >Consultation Fee ($) <span class="req">*</span></label
+              >
+              <input
+                type="number"
+                class="form-input"
+                [class.input-error]="
+                  f['consultationFee'].invalid &&
+                  (f['consultationFee'].touched || submitted)
+                "
+                formControlName="consultationFee"
+                placeholder="e.g. 150"
+                min="0"
+              />
+              <span
+                class="field-error"
+                *ngIf="
+                  f['consultationFee'].invalid &&
+                  (f['consultationFee'].touched || submitted)
+                "
+              >
+                Enter a valid fee.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="section-block">
+          <div class="section-label">Bio</div>
+          <div class="form-group">
+            <textarea
+              class="form-input form-textarea"
+              formControlName="bio"
+              placeholder="Write a short professional bio…"
+              rows="4"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Qualifications -->
+        <div class="section-block">
+          <div class="section-label">Qualifications</div>
+          <div class="form-group">
+            <textarea
+              class="form-input form-textarea"
+              formControlName="qualifications"
+              placeholder="e.g. MBBS, MD – Cardiology, FACC…"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+  </ng-container>
+
+  <!-- ─── CONFIRM POPUP ─── -->
+  <div class="overlay" *ngIf="showConfirmPopup" (click)="cancelConfirm()"></div>
+  <div class="confirm-popup" *ngIf="showConfirmPopup">
+    <div class="confirm-icon">
+      <svg
+        width="28"
+        height="28"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+    </div>
+    <h3 class="confirm-title">Save changes?</h3>
+    <p class="confirm-body">
+      Your professional profile will be updated immediately.
+    </p>
+    <div class="confirm-actions">
+      <button class="btn-secondary" (click)="cancelConfirm()">Cancel</button>
+      <button class="btn-primary" (click)="confirmSave()">Confirm</button>
+    </div>
+  </div>
+</div>

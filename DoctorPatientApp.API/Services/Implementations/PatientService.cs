@@ -160,7 +160,7 @@ namespace DoctorPatientApp.API.Services.Implementations
                 LastName = patient.User.LastName,
                 Email = patient.User.Email,
                 PhoneNumber = patient.User.PhoneNumber,
-                BloodGroup = patient.BloodGroup,
+                BloodGroup = patient.BloodGroup?.ToString(),
                 Allergies = patient.Allergies,
                 MedicalHistory = patient.MedicalHistory,
                 EmergencyContactName = patient.EmergencyContactName,

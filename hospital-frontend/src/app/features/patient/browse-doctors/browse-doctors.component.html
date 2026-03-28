@@ -1,0 +1,109 @@
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <span class="eyebrow">Patient Portal</span>
+    <h1 class="page-title">Browse Doctors</h1>
+    <p class="page-sub">
+      Find a doctor and book an available appointment slot.
+    </p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-wrap">
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        width="15"
+        height="15"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search by name or specialization…"
+        [(ngModel)]="search"
+        (ngModelChange)="applyFilters()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [(ngModel)]="selectedSpec"
+      (ngModelChange)="applyFilters()"
+    >
+      <option value="">All Specializations</option>
+      <option *ngFor="let s of specializations" [value]="s">{{ s }}</option>
+    </select>
+
+    <button
+      *ngIf="search || selectedSpec"
+      class="clear-btn"
+      (click)="clearFilters()"
+    >
+      Clear
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading doctors…</span>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && filtered.length === 0" class="empty-state">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      width="32"
+      height="32"
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+    <p>No doctors found matching your search.</p>
+    <button class="clear-btn" (click)="clearFilters()">Clear filters</button>
+  </div>
+
+  <!-- Doctor Grid -->
+  <div *ngIf="!loading && filtered.length > 0" class="doctors-grid">
+    <a
+      *ngFor="let doc of filtered"
+      [routerLink]="['/patient/doctors', $any(doc).id]"
+      class="doctor-card"
+    >
+      <div class="card-top">
+        <div class="doc-avatar">{{ getInitial($any(doc).fullName) }}</div>
+        <div class="doc-meta">
+          <span class="doc-name">Dr. {{ $any(doc).fullName }}</span>
+          <span class="doc-spec">{{ $any(doc).specialization || "—" }}</span>
+        </div>
+      </div>
+
+      <div class="card-stats">
+        <div class="card-stat">
+          <span class="stat-label">Experience</span>
+          <span class="stat-val"
+            >{{ $any(doc).yearsOfExperience ?? "—" }} yrs</span
+          >
+        </div>
+        <div class="card-stat">
+          <span class="stat-label">Fee</span>
+          <span class="stat-val">₹{{ $any(doc).consultationFee ?? "—" }}</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <span class="book-label">View &amp; Book →</span>
+      </div>
+    </a>
+  </div>
+</div>

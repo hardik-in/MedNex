@@ -161,7 +161,8 @@ namespace DoctorPatientApp.API.Controllers
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var doctor = await _doctorService.GetDoctorByUserIdAsync(userId);
-                return Ok(doctor);
+                var doctorDto = await _doctorService.GetDoctorByIdAsync(doctor.Id);
+                return Ok(doctorDto);
             }
             catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
             catch (Exception ex) { return BadRequest(new { message = ex.Message }); }

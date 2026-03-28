@@ -10,7 +10,7 @@ namespace DoctorPatientApp.API.DTOs.Patient
         public string LastName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
-        public BloodGroup? BloodGroup { get; set; }
+        public string BloodGroup { get; set; }
         public string Allergies { get; set; }
         public string MedicalHistory { get; set; }
         public string EmergencyContactName { get; set; }

@@ -2,6 +2,7 @@
 using DoctorPatientApp.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DoctorPatientApp.API.Controllers
 {
@@ -95,6 +96,26 @@ namespace DoctorPatientApp.API.Controllers
             {
                 await _patientService.DeletePatientAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+    
+    [HttpGet("my")]
+        [Authorize(Roles = "Patient")]
+        public async Task<IActionResult> GetMyProfile()
+        {
+            try
+            {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+                var patient = await _patientService.GetByUserIdAsync(userId);
+                return Ok(patient);
             }
             catch (KeyNotFoundException ex)
             {

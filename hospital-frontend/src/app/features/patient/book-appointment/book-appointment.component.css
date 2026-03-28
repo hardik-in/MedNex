@@ -1,0 +1,410 @@
+:host {
+  --bg: #f0f4f8;
+  --surface: #ffffff;
+  --surface-2: #f7fafc;
+  --border: #e1e8f0;
+  --border-soft: #edf2f7;
+  --accent: #4b9fe1;
+  --accent-dark: #2f7bc8;
+  --accent-soft: rgba(75, 159, 225, 0.1);
+  --accent-glow: rgba(75, 159, 225, 0.2);
+  --text-1: #1a2b4a;
+  --text-2: #4a6080;
+  --text-3: #94a8c0;
+  --success: #3cb97a;
+  --success-soft: rgba(60, 185, 122, 0.1);
+  --danger: #e05c6a;
+  --danger-soft: rgba(224, 92, 106, 0.08);
+  --radius: 14px;
+  --radius-sm: 10px;
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: "DM Sans", sans-serif;
+  color: var(--text-1);
+}
+
+.page-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+
+/* ── Back ────────────────────────────────────────── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: color 0.15s;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+/* ── Header ──────────────────────────────────────── */
+.page-header {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.page-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 800;
+  color: var(--text-1);
+  margin: 0 0 8px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.page-sub {
+  font-size: 14px;
+  color: var(--text-3);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* ── Layout Grid ─────────────────────────────────── */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Doctor Card ─────────────────────────────────── */
+.doctor-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: sticky;
+  top: 24px;
+}
+
+.doc-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  border: 1.5px solid rgba(75, 159, 225, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-dark);
+}
+
+.doc-details {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.detail-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.detail-val {
+  font-size: 13px;
+  color: var(--text-1);
+  font-weight: 500;
+}
+
+.detail-val.bio {
+  font-weight: 300;
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+/* ── Booking Panel ───────────────────────────────── */
+.booking-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Step ────────────────────────────────────────── */
+.step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+/* ── Date Input ──────────────────────────────────── */
+.date-input {
+  padding: 9px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13.5px;
+  color: var(--text-1);
+  outline: none;
+  transition: border-color 0.15s;
+  width: 200px;
+}
+
+.date-input:focus {
+  border-color: var(--accent);
+}
+
+/* ── Slots Grid ──────────────────────────────────── */
+.slots-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.slot-btn {
+  padding: 8px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.slot-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.slot-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.no-slots {
+  font-size: 13px;
+  color: var(--text-3);
+  padding: 8px 0;
+}
+
+/* ── Reason ──────────────────────────────────────── */
+.reason-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13.5px;
+  color: var(--text-1);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.reason-input::placeholder {
+  color: var(--text-3);
+}
+.reason-input:focus {
+  border-color: var(--accent);
+}
+
+/* ── Summary ─────────────────────────────────────── */
+.summary-bar {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-glow);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.summary-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  flex-shrink: 0;
+}
+
+.summary-val {
+  font-size: 13px;
+  color: var(--text-1);
+  font-weight: 500;
+  text-align: right;
+}
+
+/* ── Book Button ─────────────────────────────────── */
+.btn-book {
+  width: 100%;
+  padding: 13px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-book:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.btn-book:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner-sm {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ── Loading ─────────────────────────────────────── */
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-3);
+  padding: 60px 0;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Dark ────────────────────────────────────────── */
+:host-context(body.dark) {
+  --bg: #0e1117;
+  --surface: #161b27;
+  --surface-2: #1c2333;
+  --border: #252d40;
+  --border-soft: #1e2636;
+  --accent: #4f7ef8;
+  --accent-dark: #3a6be0;
+  --accent-soft: rgba(79, 126, 248, 0.1);
+  --accent-glow: rgba(79, 126, 248, 0.2);
+  --text-1: #e2e8f4;
+  --text-2: #7e8fb5;
+  --text-3: #445070;
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+:host-context(body.dark) .date-input,
+:host-context(body.dark) .reason-input {
+  background: #1c2333;
+  color: var(--text-1);
+}
+
+@media (max-width: 768px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+  .doctor-card {
+    position: static;
+  }
+}

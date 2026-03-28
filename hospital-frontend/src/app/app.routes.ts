@@ -39,4 +39,10 @@ export const routes: Routes = [
 
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
+  {
+    path: 'patient',
+    canActivate: [authGuard, roleGuard(['Patient'])],
+    loadChildren: () =>
+      import('./features/patient/patient.routes').then((m) => m.PATIENT_ROUTES),
+  },
 ];

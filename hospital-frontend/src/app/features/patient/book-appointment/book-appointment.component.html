@@ -1,39 +1,141 @@
-<h2>Book Appointment</h2>
+<div class="page-wrapper">
+  <!-- Loading doctor -->
+  <div *ngIf="loadingDoctor" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading doctor details…</span>
+  </div>
 
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <label>Doctor</label>
-  <select formControlName="doctorId" (change)="loadSlots()">
-    <option [ngValue]="null">Select</option>
-    <option *ngFor="let d of doctors" [ngValue]="d.id">
-      {{ d.name }} ({{ d.specialization }})
-    </option>
-  </select>
+  <ng-container *ngIf="!loadingDoctor && doctor">
+    <!-- Back -->
+    <a routerLink="/patient/doctors" class="back-link"> ← Back to Doctors </a>
 
-  <label>Date</label>
-  <input type="date" formControlName="appointmentDate" (change)="loadSlots()" />
+    <!-- Header -->
+    <div class="page-header">
+      <span class="eyebrow">Book Appointment</span>
+      <h1 class="page-title">
+        Dr. {{ doctor.firstName }} {{ doctor.lastName }}
+      </h1>
+      <p class="page-sub">{{ doctor.specialization || "—" }}</p>
+    </div>
 
-  <label>Time Slot</label>
+    <div class="layout-grid">
+      <!-- Left: Doctor Card -->
+      <div class="doctor-card">
+        <div class="doc-avatar">
+          {{ doctor.firstName?.charAt(0)?.toUpperCase() }}
+        </div>
+        <div class="doc-details">
+          <div class="detail-row">
+            <span class="detail-label">Experience</span>
+            <span class="detail-val"
+              >{{ doctor.yearsOfExperience ?? "—" }} years</span
+            >
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Consultation Fee</span>
+            <span class="detail-val">₹{{ doctor.consultationFee ?? "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Qualifications</span>
+            <span class="detail-val">{{ doctor.qualifications || "—" }}</span>
+          </div>
+          <div class="detail-row" *ngIf="doctor.bio">
+            <span class="detail-label">About</span>
+            <span class="detail-val bio">{{ doctor.bio }}</span>
+          </div>
+        </div>
+      </div>
 
-  <div *ngIf="loadingSlots">Loading slots...</div>
+      <!-- Right: Booking Form -->
+      <div class="booking-panel">
+        <!-- Step 1: Date -->
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">1</span>
+            <span class="step-title">Select a Date</span>
+          </div>
+          <input
+            class="date-input"
+            type="date"
+            [(ngModel)]="selectedDate"
+            [min]="today"
+            (ngModelChange)="onDateChange()"
+          />
+        </div>
 
-  <select formControlName="timeSlotId">
-    <option [ngValue]="null">Select slot</option>
+        <!-- Step 2: Slot -->
+        <div class="step" *ngIf="selectedDate">
+          <div class="step-header">
+            <span class="step-number">2</span>
+            <span class="step-title">Choose a Time Slot</span>
+          </div>
 
-    <option *ngFor="let s of slots" [ngValue]="s.timeSlotId">
-      {{ s.startTime }} - {{ s.endTime }}
-    </option>
-  </select>
-  <p>Selected Slot: {{ form.value.timeSlotId }}</p>
+          <div *ngIf="loadingSlots" class="loading-state">
+            <div class="spinner"></div>
+            <span>Loading slots…</span>
+          </div>
 
-  <div *ngIf="!loadingSlots && slots.length === 0">No slots available</div>
+          <div *ngIf="!loadingSlots && slots.length === 0" class="no-slots">
+            No available slots for this date. Try another day.
+          </div>
 
-  <label>Reason</label>
-  <input type="text" formControlName="reason" />
+          <div *ngIf="!loadingSlots && slots.length > 0" class="slots-grid">
+            <button
+              *ngFor="let slot of slots"
+              class="slot-btn"
+              [class.selected]="selectedSlotId === $any(slot).id"
+              (click)="selectSlot($any(slot).id)"
+            >
+              {{ $any(slot).startTime }} – {{ $any(slot).endTime }}
+            </button>
+          </div>
+        </div>
 
-  <label>Notes</label>
-  <input type="text" formControlName="notes" />
+        <!-- Step 3: Reason -->
+        <div class="step" *ngIf="selectedSlotId">
+          <div class="step-header">
+            <span class="step-number">3</span>
+            <span class="step-title">Reason for Visit</span>
+          </div>
+          <textarea
+            class="reason-input"
+            placeholder="Briefly describe your symptoms or reason for visit…"
+            [(ngModel)]="reason"
+            rows="3"
+          >
+          </textarea>
+        </div>
 
-  <button type="submit" [disabled]="booking || form.invalid">
-    {{ booking ? "Booking..." : "Book" }}
-  </button>
-</form>
+        <!-- Summary -->
+        <div class="summary-bar" *ngIf="selectedSlot && reason.trim()">
+          <div class="summary-row">
+            <span class="summary-label">Date</span>
+            <span class="summary-val">{{ selectedDate }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Time</span>
+            <span class="summary-val"
+              >{{ selectedSlot.startTime }} – {{ selectedSlot.endTime }}</span
+            >
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Reason</span>
+            <span class="summary-val">{{ reason }}</span>
+          </div>
+        </div>
+
+        <!-- Book Button -->
+        <button
+          class="btn-book"
+          [disabled]="!selectedSlotId || !reason.trim() || booking"
+          (click)="book()"
+        >
+          <span *ngIf="!booking">Confirm Booking</span>
+          <span *ngIf="booking" class="btn-loading">
+            <span class="spinner-sm"></span> Booking…
+          </span>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>

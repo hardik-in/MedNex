@@ -1,32 +1,78 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { AuthService } from '../../../core/auth/auth.service';
 import { PatientAppointmentsService } from '../patient-appointments.service';
-import { Appointment } from '../../../shared/models/appointment.model';
-import { AppointmentStatus } from '../../../shared/enums/appointment-status.enum';
+
+const STATUS_MAP: Record<number, { label: string; css: string }> = {
+  1: { label: 'Pending', css: 'status-pending' },
+  2: { label: 'Confirmed', css: 'status-confirmed' },
+  3: { label: 'Completed', css: 'status-completed' },
+  4: { label: 'Cancelled', css: 'status-cancelled' },
+  5: { label: 'No Show', css: 'status-noshow' },
+};
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-patient-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
 export class PatientDashboardComponent implements OnInit {
-  appointments: Appointment[] = [];
+  private auth = inject(AuthService);
+  private svc = inject(PatientAppointmentsService);
+
+  user = this.auth.getUser();
   loading = true;
 
-  constructor(private service: PatientAppointmentsService) {}
+  upcoming: any[] = [];
+  past: any[] = [];
+  assignedDoctors: any[] = [];
 
-  ngOnInit() {
-    this.loadAppointments();
+  get greeting(): string {
+    const h = new Date().getHours();
+    if (h < 12) return 'Morning';
+    if (h < 17) return 'Afternoon';
+    return 'Evening';
   }
 
-  loadAppointments() {
-    this.loading = true;
+  ngOnInit() {
+    this.svc.getMyAppointments().subscribe({
+      next: (appts) => {
+        const now = new Date();
+        this.upcoming = appts
+          .filter((a) => a.status === 1 || a.status === 2)
+          .sort(
+            (a, b) =>
+              new Date(a.appointmentDate).getTime() -
+              new Date(b.appointmentDate).getTime(),
+          )
+          .slice(0, 5);
 
-    this.service.getMyAppointments().subscribe({
-      next: (res) => {
-        this.appointments = res;
+        this.past = appts
+          .filter((a) => a.status === 3 || a.status === 4 || a.status === 5)
+          .sort(
+            (a, b) =>
+              new Date(b.appointmentDate).getTime() -
+              new Date(a.appointmentDate).getTime(),
+          )
+          .slice(0, 5);
+
+        // Unique doctors from all appointments
+        const doctorMap = new Map<number, any>();
+        appts.forEach((a) => {
+          if (!doctorMap.has(a.doctorId)) {
+            doctorMap.set(a.doctorId, {
+              id: a.doctorId,
+              name: a.doctorName,
+              specialization: a.doctorSpecialization,
+            });
+          }
+        });
+        this.assignedDoctors = Array.from(doctorMap.values()).slice(0, 3);
+
         this.loading = false;
       },
       error: () => {
@@ -34,41 +80,16 @@ export class PatientDashboardComponent implements OnInit {
       },
     });
   }
-  cancel(id: number) {
-    if (!confirm('Cancel this appointment?')) return;
 
-    this.service.cancelAppointment(id).subscribe({
-      next: () => {
-        this.loadAppointments(); // Refresh the list
-      },
-      error: (err) => {
-        alert('Failed to cancel the appointment. Please try again.');
-        console.error(err);
-      },
+  getStatus(status: number) {
+    return STATUS_MAP[status] ?? { label: 'Unknown', css: '' };
+  }
+
+  formatDate(d: string): string {
+    return new Date(d).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
     });
-  }
-  getStatusClass(status: number): string {
-    switch (status) {
-      case AppointmentStatus.Pending:
-        return 'Pending';
-      case AppointmentStatus.Completed:
-        return 'completed';
-      case AppointmentStatus.Cancelled:
-        return 'cancelled';
-      default:
-        return '';
-    }
-  }
-  getStatusText(status: number): string {
-    switch (status) {
-      case AppointmentStatus.Pending:
-        return 'Pending';
-      case AppointmentStatus.Completed:
-        return 'Completed';
-      case AppointmentStatus.Cancelled:
-        return 'Cancelled';
-      default:
-        return 'Unknown';
-    }
   }
 }

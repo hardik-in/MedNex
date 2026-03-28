@@ -1,0 +1,153 @@
+<div class="page-wrapper">
+  <!-- Back -->
+  <button class="back-btn" (click)="goBack()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+    My Patients
+  </button>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading patient…</span>
+  </div>
+
+  <ng-container *ngIf="!loading && patient">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        {{ patient.firstName?.charAt(0).toUpperCase() }}
+      </div>
+      <div class="profile-meta">
+        <span class="eyebrow">Patient Profile</span>
+        <h1 class="page-title">
+          {{ patient.firstName }} {{ patient.lastName }}
+        </h1>
+        <div class="meta-chips">
+          <span
+            class="chip"
+            *ngIf="patient.gender !== null && patient.gender !== undefined"
+          >
+            {{ getGender(patient.gender) }}
+          </span>
+          <span class="chip">{{ getAge(patient.dateOfBirth) }}</span>
+          <span class="chip" *ngIf="patient.bloodGroup">{{
+            formatBloodGroup(patient.bloodGroup)
+          }}</span>
+          <span class="chip" [class.chip--inactive]="!patient.isActive">
+            {{ patient.isActive ? "Active" : "Inactive" }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two column grid -->
+    <div class="detail-grid">
+      <!-- Contact Info -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Contact Information</span>
+        </div>
+        <div class="card-body">
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span>{{ patient.email || "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span>{{ patient.phoneNumber || "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Address</span>
+            <span>{{ patient.address || "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Date of Birth</span>
+            <span>{{ formatDate(patient.dateOfBirth) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Medical Info -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Medical Information</span>
+        </div>
+        <div class="card-body">
+          <div class="detail-row">
+            <span class="detail-label">Blood Group</span>
+            <span>{{ formatBloodGroup(patient.bloodGroup) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Allergies</span>
+            <span>{{ patient.allergies || "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Medical History</span>
+            <span>{{ patient.medicalHistory || "—" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Contact -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-label">Emergency Contact</span>
+        </div>
+        <div class="card-body">
+          <div class="detail-row">
+            <span class="detail-label">Name</span>
+            <span>{{ patient.emergencyContactName || "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span>{{ patient.emergencyContactPhone || "—" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appointment History -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-label">Appointment History</span>
+        <span class="section-count">{{ appointments.length }}</span>
+      </div>
+
+      <div *ngIf="appointments.length === 0" class="empty-state">
+        No appointments found with this patient.
+      </div>
+
+      <div *ngIf="appointments.length > 0" class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Reason</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appt of appointments">
+              <td class="td-date">{{ formatDate(appt.appointmentDate) }}</td>
+              <td class="td-time">{{ appt.startTime }} – {{ appt.endTime }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatus(appt.status).css"
+                >
+                  {{ getStatus(appt.status).label }}
+                </span>
+              </td>
+              <td class="td-text">{{ appt.reason || "—" }}</td>
+              <td class="td-text">{{ appt.notes || "—" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>

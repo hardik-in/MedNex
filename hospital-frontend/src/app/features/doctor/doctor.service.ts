@@ -59,4 +59,21 @@ export class DoctorService {
   deleteSlot(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/api/timeslots/${id}`);
   }
+  getPatientById(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/api/patients/${id}`);
+  }
+  updateMyProfile(
+    id: number,
+    payload: {
+      phoneNumber?: string | null;
+      consultationFee?: number | null;
+      bio?: string | null;
+      qualifications?: string | null;
+    },
+  ): Observable<any> {
+    return this.http.put(
+      `${environment.apiBaseUrl}/api/doctors/${id}`,
+      payload,
+    );
+  }
 }

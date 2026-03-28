@@ -13,6 +13,8 @@
   --success-soft: rgba(60, 185, 122, 0.1);
   --warning: #e0a83c;
   --warning-soft: rgba(224, 168, 60, 0.1);
+  --info: #4b9fe1;
+  --info-soft: rgba(75, 159, 225, 0.1);
   --danger: #e05c6a;
   --danger-soft: rgba(224, 92, 106, 0.08);
   --radius: 14px;
@@ -39,7 +41,6 @@
   padding: 40px 32px 80px;
 }
 
-/* ── Header ── */
 .page-header {
   margin-bottom: 32px;
 }
@@ -78,7 +79,43 @@
   flex-wrap: wrap;
 }
 
-.date-input,
+.search-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrap svg {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-3);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 9px 12px 9px 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: 14px;
+  font-family: "DM Sans", sans-serif;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+}
+.search-input::placeholder {
+  color: var(--text-3);
+}
+
 .filter-select {
   padding: 9px 12px;
   border: 1px solid var(--border);
@@ -89,43 +126,6 @@
   font-family: "DM Sans", sans-serif;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.15s;
-}
-
-.date-input:focus,
-.filter-select:focus {
-  border-color: var(--accent);
-}
-
-.toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text-2);
-  font-size: 14px;
-  font-family: "DM Sans", sans-serif;
-  cursor: pointer;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-
-.toggle-btn svg {
-  width: 15px;
-  height: 15px;
-}
-.toggle-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.toggle-btn.active {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
-  font-weight: 600;
 }
 
 /* ── Loading ── */
@@ -168,17 +168,7 @@
 
 .empty-state p {
   font-size: 15px;
-  margin: 0 0 8px;
-}
-
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 14px;
-  cursor: pointer;
-  text-decoration: underline;
-  font-family: "DM Sans", sans-serif;
+  margin: 0;
 }
 
 /* ── Table ── */
@@ -210,19 +200,17 @@
   color: var(--text-3);
 }
 
-.table tbody tr {
+.clickable-row {
   border-bottom: 1px solid var(--border-soft);
+  cursor: pointer;
   transition: background 0.12s;
 }
 
-.table tbody tr:last-child {
+.clickable-row:last-child {
   border-bottom: none;
 }
-.table tbody tr:hover {
+.clickable-row:hover {
   background: var(--surface-2);
-}
-.row-booked {
-  opacity: 0.75;
 }
 
 .table td {
@@ -231,58 +219,39 @@
   vertical-align: middle;
 }
 
-.td-date {
+.td-name {
   color: var(--text-1);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+
+.patient-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .td-time {
   font-variant-numeric: tabular-nums;
   font-size: 13px;
 }
-.td-duration {
-  font-size: 13px;
+.td-arrow {
+  width: 32px;
   color: var(--text-3);
 }
-.td-action {
-  width: 48px;
-  text-align: center;
-}
-
-.td-locked {
-  color: var(--text-3);
-  opacity: 0.4;
-  display: flex;
-  justify-content: center;
-}
-
-.td-locked svg {
-  width: 15px;
-  height: 15px;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-3);
-  padding: 4px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    color 0.15s,
-    background 0.15s;
-}
-
-.delete-btn svg {
+.td-arrow svg {
   width: 16px;
   height: 16px;
-}
-
-.delete-btn:hover {
-  color: var(--danger);
-  background: var(--danger-soft);
 }
 
 .results-count {
@@ -292,8 +261,8 @@
   text-align: right;
 }
 
-/* ── Status Badges ── */
-.slot-badge {
+/* ── Badges ── */
+.status-badge {
   display: inline-block;
   padding: 3px 10px;
   border-radius: 20px;
@@ -301,103 +270,23 @@
   font-weight: 600;
 }
 
-.slot-available {
-  background: var(--success-soft);
-  color: var(--success);
-}
-.slot-booked {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.slot-blocked {
+.status-pending {
   background: var(--warning-soft);
   color: var(--warning);
 }
-
-/* ── Confirm Modal ── */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 200;
-  padding: 20px;
-  backdrop-filter: blur(2px);
+.status-confirmed {
+  background: var(--info-soft);
+  color: var(--info);
 }
-
-.confirm-modal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 32px 28px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
+.status-completed {
+  background: var(--success-soft);
+  color: var(--success);
 }
-
-.confirm-icon {
-  width: 48px;
-  height: 48px;
+.status-cancelled {
   background: var(--danger-soft);
   color: var(--danger);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
 }
-
-.confirm-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.confirm-title {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--text-1);
-  margin: 0 0 8px;
-}
-
-.confirm-body {
-  font-size: 14px;
-  color: var(--text-2);
-  margin: 0 0 24px;
-  line-height: 1.5;
-}
-
-.confirm-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.btn {
-  padding: 9px 20px;
-  border-radius: var(--radius-sm);
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: "DM Sans", sans-serif;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.btn-muted {
+.status-noshow {
   background: var(--surface-2);
-  color: var(--text-2);
-  border: 1px solid var(--border);
-}
-.btn-danger {
-  background: var(--danger-soft);
-  color: var(--danger);
-}
-.btn-muted:hover {
-  background: var(--border);
-}
-.btn-danger:hover {
-  opacity: 0.8;
+  color: var(--text-3);
 }

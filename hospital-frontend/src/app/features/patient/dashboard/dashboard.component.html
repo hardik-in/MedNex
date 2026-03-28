@@ -1,54 +1,225 @@
-<div class="appointments-container">
-  <h2>My Appointments</h2>
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <span class="eyebrow">Patient Portal</span>
+    <h1 class="page-title">
+      Good {{ greeting }}, {{ user?.firstName || "—" }}
+    </h1>
+    <p class="page-sub">Here's an overview of your health appointments.</p>
+  </div>
 
-  <div *ngIf="loading" class="state-container">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
-    <p>Loading your medical schedule...</p>
+    <span>Loading dashboard…</span>
   </div>
 
-  <div *ngIf="!loading && appointments.length === 0" class="state-container empty">
-    <p>No appointments scheduled yet.</p>
-  </div>
+  <ng-container *ngIf="!loading">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card stat-card--accent">
+        <div class="stat-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">Upcoming</span>
+          <span class="stat-value">{{ upcoming.length }}</span>
+        </div>
+      </div>
 
-  <table *ngIf="!loading && appointments.length > 0" class="hms-table">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Doctor</th>
-        <th>Specialization</th>
-        <th>Time Slot</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let a of appointments">
-        <td>{{ a.appointmentDate | date: "mediumDate" }}</td>
+      <div class="stat-card stat-card--success">
+        <div class="stat-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">Completed</span>
+          <span class="stat-value">{{ past.length }}</span>
+        </div>
+      </div>
 
-        <td>
-          <span class="doctor-name">Dr. {{ a.doctorName }}</span>
-        </td>
-        
-        <td>{{ a.doctorSpecialization }}</td>
+      <div class="stat-card stat-card--purple">
+        <div class="stat-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-label">My Doctors</span>
+          <span class="stat-value">{{ assignedDoctors.length }}</span>
+        </div>
+      </div>
+    </div>
 
-        <td>{{ a.startTime }} - {{ a.endTime }}</td>
+    <!-- Quick Actions -->
+    <div class="section-label">Quick Actions</div>
+    <div class="quick-grid">
+      <a routerLink="/patient/doctors" class="quick-card">
+        <div class="card-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            width="22"
+            height="22"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>Book Appointment</h3>
+          <p>Browse doctors and available slots</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
 
-        <td>
-          <span class="status-badge" [ngClass]="getStatusClass(a.status)">
-            {{ getStatusText(a.status) }}
-          </span>
-        </td>
+      <a routerLink="/patient/appointments" class="quick-card">
+        <div class="card-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            width="22"
+            height="22"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>My Appointments</h3>
+          <p>View and manage your appointments</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
 
-        <td>
-          <button 
-            *ngIf="a.status === 0" 
-            class="btn-cancel" 
-            (click)="cancel(a.id)">
-            Cancel
-          </button>
-          <span *ngIf="a.status !== 0">-</span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+      <a routerLink="/patient/profile" class="quick-card">
+        <div class="card-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            width="22"
+            height="22"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+        <div class="card-content">
+          <h3>My Profile</h3>
+          <p>Update your personal details</p>
+        </div>
+        <div class="card-arrow">→</div>
+      </a>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="section" *ngIf="upcoming.length > 0">
+      <div class="section-header">
+        <span class="section-label">Upcoming Appointments</span>
+        <a routerLink="/patient/appointments" class="section-link"
+          >View all →</a
+        >
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Doctor</th>
+              <th>Specialization</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let appt of upcoming">
+              <td class="td-name">Dr. {{ appt.doctorName }}</td>
+              <td>{{ appt.doctorSpecialization || "—" }}</td>
+              <td>{{ formatDate(appt.appointmentDate) }}</td>
+              <td class="td-time">{{ appt.startTime }} – {{ appt.endTime }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatus(appt.status).css"
+                >
+                  {{ getStatus(appt.status).label }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Assigned Doctors -->
+    <div class="section" *ngIf="assignedDoctors.length > 0">
+      <div class="section-header">
+        <span class="section-label">My Doctors</span>
+      </div>
+      <div class="doctors-row">
+        <div *ngFor="let doc of assignedDoctors" class="doctor-chip">
+          <div class="doc-avatar">
+            {{ doc.name?.charAt(0)?.toUpperCase() || "D" }}
+          </div>
+          <div class="doc-info">
+            <span class="doc-name">Dr. {{ doc.name }}</span>
+            <span class="doc-spec">{{ doc.specialization || "—" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="upcoming.length === 0 && past.length === 0" class="empty-hero">
+      <div class="empty-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          width="32"
+          height="32"
+        >
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      </div>
+      <h3>No appointments yet</h3>
+      <p>Book your first appointment with a doctor.</p>
+      <a routerLink="/patient/doctors" class="btn-primary">Browse Doctors</a>
+    </div>
+  </ng-container>
 </div>

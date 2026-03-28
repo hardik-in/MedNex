@@ -1,0 +1,113 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <span class="eyebrow">Patients</span>
+    <h1 class="page-title">My Patients</h1>
+    <p class="page-sub">Patients who have had appointments with you.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search by patient name…"
+        [(ngModel)]="search"
+        (ngModelChange)="applyFilters()"
+      />
+    </div>
+
+    <select
+      class="filter-select"
+      [(ngModel)]="statusFilter"
+      (ngModelChange)="applyFilters()"
+    >
+      <option [ngValue]="0">All Statuses</option>
+      <option [ngValue]="1">Pending</option>
+      <option [ngValue]="2">Confirmed</option>
+      <option [ngValue]="3">Completed</option>
+      <option [ngValue]="4">Cancelled</option>
+      <option [ngValue]="5">No Show</option>
+    </select>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Loading patients…</span>
+  </div>
+
+  <div *ngIf="!loading && filtered.length === 0" class="empty-state">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+    <p>No patients found.</p>
+  </div>
+
+  <div *ngIf="!loading && filtered.length > 0" class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Patient</th>
+          <th>Last Appointment</th>
+          <th>Time</th>
+          <th>Last Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let p of filtered"
+          class="clickable-row"
+          (click)="goToDetail(p.patientId)"
+        >
+          <td class="td-name">
+            <div class="patient-avatar">
+              {{ p.patientName?.charAt(0).toUpperCase() }}
+            </div>
+            {{ p.patientName }}
+          </td>
+          <td>{{ formatDate(p.lastAppointmentDate) }}</td>
+          <td class="td-time">
+            {{ p.startTime || "—" }}
+            <span *ngIf="p.endTime"> – {{ p.endTime }}</span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStatus(p.status).css">
+              {{ getStatus(p.status).label }}
+            </span>
+          </td>
+          <td class="td-arrow">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading" class="results-count">
+    {{ filtered.length }} patient{{ filtered.length !== 1 ? "s" : "" }}
+  </div>
+</div>

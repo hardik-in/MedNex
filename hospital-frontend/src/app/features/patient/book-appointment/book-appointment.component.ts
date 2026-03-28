@@ -1,74 +1,109 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PatientAppointmentsService } from '../patient-appointments.service';
-import { Doctor } from '../../../shared/models/doctor.model';
-import { TimeSlot } from '../../../shared/models/time-slot.model';
-import { CreateAppointmentPayload } from '../../../shared/models/appointment.model';
+import { ToastService } from '../../../core/toast/toast.service';
 
 @Component({
   selector: 'app-book-appointment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [NgFor, NgIf, FormsModule, RouterLink],
   templateUrl: './book-appointment.component.html',
+  styleUrl: './book-appointment.component.css',
 })
 export class BookAppointmentComponent implements OnInit {
-  doctors: Doctor[] = [];
-  slots: TimeSlot[] = [];
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private svc = inject(PatientAppointmentsService);
+  private toast = inject(ToastService);
 
+  doctorId!: number;
+  doctor: any = null;
+  slots: any[] = [];
+
+  loadingDoctor = true;
   loadingSlots = false;
   booking = false;
 
-  form = this.fb.group({
-    doctorId: [null, Validators.required],
-    appointmentDate: [null, Validators.required],
-    timeSlotId: [null, Validators.required],
-    reason: ['', Validators.required],
-    notes: ['', Validators.required],
-  });
+  selectedDate = '';
+  selectedSlotId: number | null = null;
+  reason = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private service: PatientAppointmentsService,
-    private router: Router,
-  ) {}
+  get today(): string {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  get selectedSlot(): any {
+    return this.slots.find((s) => s.id === this.selectedSlotId) ?? null;
+  }
 
   ngOnInit() {
-    this.service.getDoctors().subscribe((res) => (this.doctors = res));
+    this.doctorId = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.svc.getDoctor(this.doctorId).subscribe({
+      next: (d) => {
+        this.doctor = d;
+        this.loadingDoctor = false;
+      },
+      error: () => {
+        this.toast.error('Failed to load doctor details.');
+        this.loadingDoctor = false;
+      },
+    });
   }
 
-  loadSlots() {
-    const doctorId = this.form.value.doctorId;
-    const date = this.form.value.appointmentDate;
+  onDateChange() {
+    if (!this.selectedDate) return;
+    this.selectedSlotId = null;
+    this.slots = [];
+    this.loadingSlots = true;
 
-    if (!doctorId || !date) return;
-
-    this.form.patchValue({ timeSlotId: null });
-
-    this.service
-      .getAvailableSlots(doctorId, date)
-      .subscribe((res) => (this.slots = res));
+    this.svc.getAvailableSlots(this.doctorId, this.selectedDate).subscribe({
+      next: (slots) => {
+        this.slots = slots.filter((s: any) => s.status === 1);
+        this.loadingSlots = false;
+      },
+      error: () => {
+        this.toast.error('Failed to load slots.');
+        this.loadingSlots = false;
+      },
+    });
   }
 
-submit() {
+  selectSlot(id: number) {
+    this.selectedSlotId = this.selectedSlotId === id ? null : id;
+  }
 
-  if (this.form.invalid) return;
+  book() {
+    if (!this.selectedSlotId) {
+      this.toast.warning('Please select a time slot.');
+      return;
+    }
+    if (!this.reason.trim()) {
+      this.toast.warning('Please enter a reason for the appointment.');
+      return;
+    }
 
-  const raw = this.form.getRawValue();
-
-  const payload: CreateAppointmentPayload = {
-    doctorId: raw.doctorId!,          // safe after validation
-    timeSlotId: raw.timeSlotId!,
-    appointmentDate: raw.appointmentDate!,
-    reason: raw.reason!,
-    notes: raw.notes!
-  };
-
-  this.service.createAppointment(payload).subscribe(() => {
-    alert('Appointment booked');
-    this.router.navigate(['/patient']);
-  });
-}
-
+    this.booking = true;
+    this.svc
+      .createAppointment({
+        doctorId: this.doctorId,
+        timeSlotId: this.selectedSlotId,
+        appointmentDate: this.selectedDate,
+        reason: this.reason.trim(),
+      })
+      .subscribe({
+        next: () => {
+          this.toast.success('Appointment booked successfully!');
+          this.router.navigate(['/patient/appointments']);
+        },
+        error: (err) => {
+          this.toast.error(
+            err?.error?.message ?? 'Failed to book appointment.',
+          );
+          this.booking = false;
+        },
+      });
+  }
 }

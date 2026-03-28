@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,6 +80,11 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 var app = builder.Build();
 
