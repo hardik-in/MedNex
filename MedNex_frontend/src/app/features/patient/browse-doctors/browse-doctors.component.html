@@ -1,0 +1,90 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <span class="eyebrow">Patient Portal</span>
+    <h1 class="page-title">Browse Doctors</h1>
+    <p class="page-sub">Find a doctor and book an available appointment slot.</p>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" width="15" height="15" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="search-input" type="text"
+        placeholder="Search by name or specialization…"
+        [(ngModel)]="search" (ngModelChange)="applyFilters()"
+        aria-label="Search doctors"/>
+    </div>
+
+    <select class="filter-select" [(ngModel)]="selectedSpec" (ngModelChange)="applyFilters()"
+      aria-label="Filter by specialization">
+      <option value="">All Specializations</option>
+      @for (s of specializations; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+
+    @if (search || selectedSpec) {
+      <button class="clear-btn" (click)="clearFilters()">Clear</button>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Loading doctors…</span>
+    </div>
+  } @else if (error) {
+    <div class="empty-state" role="alert">{{ error }}</div>
+  } @else if (filtered.length === 0) {
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.5" width="32" height="32" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <p>No doctors found matching your search.</p>
+      <button class="clear-btn" (click)="clearFilters()">Clear filters</button>
+    </div>
+  } @else {
+    <div class="doctors-grid">
+      @for (doc of filtered; track doc.publicId) {
+        <!-- Route uses publicId (Guid string) — not int id -->
+        <a [routerLink]="['/patient/doctors', doc.publicId]" class="doctor-card">
+          <div class="card-top">
+            <div class="doc-avatar" aria-hidden="true">{{ getInitial(doc) }}</div>
+            <div class="doc-meta">
+              <span class="doc-name">Dr. {{ getDoctorName(doc) }}</span>
+              <span class="doc-spec">{{ doc.specialization || '—' }}</span>
+            </div>
+          </div>
+          <div class="card-stats">
+            <div class="card-stat">
+              <span class="stat-label">Experience</span>
+              <span class="stat-val">{{ getExperienceYears(doc.careerStartDate) }}</span>
+            </div>
+            <div class="card-stat">
+              <span class="stat-label">Fee</span>
+              <span class="stat-val">₹{{ doc.consultationFee ?? '—' }}</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span class="book-label">View &amp; Book →</span>
+          </div>
+        </a>
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button class="page-btn" (click)="prevPage()" [disabled]="currentPage === 1"
+          aria-label="Previous page">‹</button>
+        <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+        <button class="page-btn" (click)="nextPage()" [disabled]="currentPage === totalPages"
+          aria-label="Next page">›</button>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,194 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-left">
+      <span class="eyebrow">Patient Portal</span>
+      <h1 class="page-title">My Profile</h1>
+      <p class="page-sub">Your personal and medical information.</p>
+    </div>
+
+    @if (!loading && profile) {
+      <div class="header-actions">
+        @if (!isEditing) {
+          <button class="btn-edit" (click)="startEditing()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              width="14" height="14" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit Profile
+          </button>
+        } @else {
+          <button class="btn-secondary" (click)="cancelEditing()">Cancel</button>
+          <button class="btn-save" [disabled]="saving" (click)="requestSave()">
+            {{ saving ? 'Saving…' : 'Save Changes' }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Loading profile…</span>
+    </div>
+  } @else if (profile) {
+
+    @if (!isEditing) {
+      <div class="profile-grid">
+        <div class="profile-card identity-card">
+          <div class="avatar-block">
+            <div class="avatar" aria-hidden="true">
+              {{ p.firstName.charAt(0).toUpperCase() }}{{ p.lastName.charAt(0).toUpperCase() }}
+            </div>
+            <div>
+              <div class="avatar-name">{{ p.firstName }} {{ p.lastName }}</div>
+              <!-- referenceId for display — not internal int id -->
+              <div class="avatar-role">Patient · {{ p.referenceId }}</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="detail-list">
+            <div class="detail-item">
+              <span class="detail-label">Email</span>
+              <span class="detail-val">{{ p.email || '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Phone</span>
+              <span class="detail-val">{{ p.phoneNumber || '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Address</span>
+              <span class="detail-val">{{ p.address || '—' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Member Since</span>
+              <span class="detail-val">{{ p.createdAt | date: 'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="profile-card">
+            <div class="card-title">Medical Information</div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Blood Group</span>
+                <span class="blood-badge">{{ formatBloodGroup(p.bloodGroup) }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Gender</span>
+                <span class="detail-val">{{ p.gender || '—' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Date of Birth</span>
+                <span class="detail-val">{{ p.dateOfBirth ? (p.dateOfBirth | date: 'dd MMM yyyy') : '—' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Allergies</span>
+                <span class="detail-val">{{ p.allergies || '—' }}</span>
+              </div>
+              <div class="detail-item full-width">
+                <span class="detail-label">Medical History</span>
+                <span class="detail-val">{{ p.medicalHistory || '—' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="profile-card">
+            <div class="card-title">Emergency Contact</div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <span class="detail-label">Name</span>
+                <span class="detail-val">{{ p.emergencyContactName || '—' }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Phone</span>
+                <span class="detail-val">{{ p.emergencyContactPhone || '—' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="form-card">
+        <div class="form-section-title">Personal Information</div>
+        <div class="form-row">
+          <div class="field">
+            <label class="field-label" for="pp-first">First Name <span class="req">*</span></label>
+            <input id="pp-first" class="field-input" type="text" [formControl]="f['firstName']"
+              [class.error]="f['firstName'].invalid && (f['firstName'].touched || submitted)"/>
+            @if (f['firstName'].invalid && (f['firstName'].touched || submitted)) {
+              <span class="field-error">Required</span>
+            }
+          </div>
+          <div class="field">
+            <label class="field-label" for="pp-last">Last Name <span class="req">*</span></label>
+            <input id="pp-last" class="field-input" type="text" [formControl]="f['lastName']"
+              [class.error]="f['lastName'].invalid && (f['lastName'].touched || submitted)"/>
+            @if (f['lastName'].invalid && (f['lastName'].touched || submitted)) {
+              <span class="field-error">Required</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label class="field-label" for="pp-phone">Phone Number</label>
+            <input id="pp-phone" class="field-input" type="text" [formControl]="f['phoneNumber']"/>
+          </div>
+          <div class="field">
+            <label class="field-label" for="pp-address">Address</label>
+            <input id="pp-address" class="field-input" type="text" [formControl]="f['address']"/>
+          </div>
+        </div>
+
+        <div class="form-section-title">Medical Details</div>
+        <div class="field">
+          <label class="field-label" for="pp-allergies">Allergies</label>
+          <textarea id="pp-allergies" class="field-input field-textarea"
+            [formControl]="f['allergies']" placeholder="List any known allergies…" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label class="field-label" for="pp-history">Medical History</label>
+          <textarea id="pp-history" class="field-input field-textarea"
+            [formControl]="f['medicalHistory']"
+            placeholder="Previous conditions, surgeries, medications…" rows="3"></textarea>
+        </div>
+
+        <div class="form-section-title">Emergency Contact</div>
+        <div class="form-row">
+          <div class="field">
+            <label class="field-label" for="pp-ecname">Contact Name</label>
+            <input id="pp-ecname" class="field-input" type="text" [formControl]="f['emergencyContactName']"/>
+          </div>
+          <div class="field">
+            <label class="field-label" for="pp-ecphone">Contact Phone</label>
+            <input id="pp-ecphone" class="field-input" type="text" [formControl]="f['emergencyContactPhone']"/>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+@if (showConfirmPopup) {
+  <div class="overlay" (click)="cancelSave()" role="dialog" aria-modal="true" aria-label="Confirm save profile"></div>
+  <div class="popup">
+    <div class="popup-header">
+      <h3 class="popup-title">Save Changes?</h3>
+      <button class="popup-close" (click)="cancelSave()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          width="16" height="16" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <p class="popup-sub">Are you sure you want to update your profile details?</p>
+    <div class="popup-actions">
+      <button class="btn-secondary" (click)="cancelSave()">Cancel</button>
+      <button class="btn-primary" (click)="save()">Yes, Save</button>
+    </div>
+  </div>
+}

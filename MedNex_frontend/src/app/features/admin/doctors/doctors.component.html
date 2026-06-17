@@ -1,0 +1,153 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Admin Panel</span>
+      <h2 class="page-title">Manage Doctors</h2>
+    </div>
+    <a routerLink="/admin/doctors/create" class="btn-primary"
+      >+ Create Doctor</a
+    >
+  </div>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <div class="loading-spinner"></div>
+      <span>Loading doctors…</span>
+    </div>
+  } @else if (error) {
+    <div class="empty-state">{{ error }}</div>
+  } @else {
+    <div class="table-container">
+      @if (doctors.length === 0) {
+        <div class="empty-state">No doctors found.</div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>License</th>
+                <th>Specialization</th>
+                <th>Assigned Admin</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of doctors; track d.publicId) {
+                <tr>
+                  <td>
+                    <a
+                      [routerLink]="['/admin/doctors', d.publicId]"
+                      class="doctor-link"
+                    >
+                      {{ d.fullName }}
+                    </a>
+                  </td>
+                  <td class="text-muted">{{ d.email }}</td>
+                  <td class="text-muted">{{ d.phoneNumber || "—" }}</td>
+                  <td>
+                    <span class="badge">{{ d.licenseNumber }}</span>
+                  </td>
+                  <td>{{ d.specialization || "—" }}</td>
+                  <td>
+                    <span class="admin-tag">
+                      {{ getAdminName(d.assignedAdminPublicId) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="action-btns">
+                      <button
+                        class="btn-edit"
+                        [routerLink]="['/admin/doctors/edit', d.publicId]"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        class="btn-delete"
+                        (click)="confirmDelete(d.publicId, d.fullName)"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span>{{ totalCount }} doctors total</span>
+          <div class="pagination">
+            <button
+              class="page-btn"
+              (click)="prevPage()"
+              [disabled]="currentPage === 1"
+              aria-label="Previous page"
+            >
+              ‹
+            </button>
+            <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+            <button
+              class="page-btn"
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              aria-label="Next page"
+            >
+              ›
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Delete Confirmation Modal -->
+  @if (doctorToDelete) {
+    <div
+      class="overlay"
+      (click)="cancelDelete()"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="'Confirm delete ' + doctorToDelete.name"
+    >
+      <div class="confirm-popup" (click)="$event.stopPropagation()">
+        <div class="confirm-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+          </svg>
+        </div>
+        <h3 class="confirm-title">Delete Doctor</h3>
+        <p class="confirm-message">
+          Are you sure you want to delete
+          <strong>{{ doctorToDelete.name }}</strong
+          >? This action cannot be undone.
+        </p>
+        <div class="confirm-actions">
+          <button class="confirm-cancel" (click)="cancelDelete()">
+            Cancel
+          </button>
+          <button class="confirm-delete" (click)="deleteDoctor()">
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,133 @@
+<div class="page-wrapper">
+  <button class="back-btn" (click)="goBack()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    My Patients
+  </button>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Loading patient…</span>
+    </div>
+  } @else if (error) {
+    <div class="empty-state" role="alert">{{ error }}</div>
+  } @else if (patient) {
+
+    <div class="profile-header">
+      <div class="profile-avatar" aria-hidden="true">
+        {{ p.firstName.charAt(0).toUpperCase() }}
+      </div>
+      <div class="profile-meta">
+        <span class="eyebrow">Patient Profile</span>
+        <h1 class="page-title">{{ p.firstName }} {{ p.lastName }}</h1>
+        <div class="meta-chips">
+          @if (p.gender !== null && p.gender !== undefined) {
+            <span class="chip">{{ getGender(p.gender) }}</span>
+          }
+          <span class="chip">{{ getAge(p.dateOfBirth) }}</span>
+          @if (p.bloodGroup) {
+            <span class="chip">{{ formatBloodGroup(p.bloodGroup) }}</span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="card">
+        <div class="card-header"><span class="card-label">Contact Information</span></div>
+        <div class="card-body">
+          <div class="detail-row">
+            <span class="detail-label">Email</span>
+            <span>{{ p.email || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span>{{ p.phoneNumber || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Address</span>
+            <span>{{ p.address || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Date of Birth</span>
+            <span>{{ formatDate(p.dateOfBirth) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-label">Medical Information</span></div>
+        <div class="card-body">
+          <div class="detail-row">
+            <span class="detail-label">Blood Group</span>
+            <span>{{ formatBloodGroup(p.bloodGroup ?? '') }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Allergies</span>
+            <span>{{ p.allergies || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Medical History</span>
+            <span>{{ p.medicalHistory || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-label">Emergency Contact</span></div>
+        <div class="card-body">
+          <div class="detail-row">
+            <span class="detail-label">Name</span>
+            <span>{{ p.emergencyContactName || '—' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone</span>
+            <span>{{ p.emergencyContactPhone || '—' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <span class="section-label">Appointment History</span>
+        <span class="section-count">{{ appointments.length }}</span>
+      </div>
+
+      @if (appointments.length === 0) {
+        <div class="empty-state">No appointments found with this patient.</div>
+      } @else {
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Reason</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (appt of appointments; track appt.publicId) {
+                <tr>
+                  <td class="td-date">{{ formatDate(appt.appointmentDate) }}</td>
+                  <td class="td-time">{{ appt.startTime }} – {{ appt.endTime }}</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="getStatus(appt.status).css">
+                      {{ getStatus(appt.status).label }}
+                    </span>
+                  </td>
+                  <td class="td-text">{{ appt.reason || '—' }}</td>
+                  <td class="td-text">{{ appt.notes || '—' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

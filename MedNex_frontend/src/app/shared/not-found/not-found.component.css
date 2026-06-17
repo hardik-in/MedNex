@@ -1,0 +1,195 @@
+/* ── Layout ───────────────────────────────────────────────────── */
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #0f1117;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', 'DM Sans', sans-serif;
+  padding: 2rem;
+  gap: 0;
+}
+
+/* ── ECG decorative lines ─────────────────────────────────────── */
+.ecg {
+  width: 100%;
+  height: 60px;
+  position: absolute;
+  left: 0;
+  top: 80px;
+  opacity: 0.18;
+}
+
+.ecg--bottom {
+  top: auto;
+  bottom: 80px;
+  transform: scaleX(-1);
+  opacity: 0.12;
+}
+
+.ecg-line {
+  fill: none;
+  stroke: #22c55e;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: draw-ecg 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ecg--bottom .ecg-line {
+  animation-delay: 0.4s;
+}
+
+@keyframes draw-ecg {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Card ─────────────────────────────────────────────────────── */
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  animation: fade-up 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay: 0.15s;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── 404 code block ───────────────────────────────────────────── */
+.code-block {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  line-height: 1;
+}
+
+.code-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #22c55e;
+  opacity: 0.8;
+}
+
+.code-number {
+  font-size: clamp(5rem, 16vw, 8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #1e2330;
+  /* Subtle outline so it reads on dark bg */
+  -webkit-text-stroke: 1.5px #2a3040;
+  /* Green glow on the number */
+  text-shadow:
+    0 0 60px rgba(34, 197, 94, 0.06),
+    0 0 120px rgba(34, 197, 94, 0.04);
+}
+
+/* ── Text ─────────────────────────────────────────────────────── */
+.heading {
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.subtext {
+  font-size: 0.95rem;
+  color: #64748b;
+  max-width: 360px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Back button ──────────────────────────────────────────────── */
+.btn-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1.4rem;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid #2a3040;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.btn-home:hover {
+  color: #22c55e;
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.btn-home svg {
+  transition: transform 0.18s ease;
+}
+
+.btn-home:hover svg {
+  transform: translateX(-3px);
+}
+
+/* ── Light mode support ───────────────────────────────────────── */
+:host-context(body:not(.dark)) .wrapper {
+  background-color: #f8fafc;
+}
+
+:host-context(body:not(.dark)) .code-number {
+  color: #e2e8f0;
+  -webkit-text-stroke: 1.5px #cbd5e1;
+}
+
+:host-context(body:not(.dark)) .heading {
+  color: #0f172a;
+}
+
+:host-context(body:not(.dark)) .subtext {
+  color: #64748b;
+}
+
+:host-context(body:not(.dark)) .btn-home {
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+:host-context(body:not(.dark)) .btn-home:hover {
+  color: #16a34a;
+  border-color: #16a34a;
+  background: rgba(22, 163, 74, 0.06);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ecg-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  .card {
+    animation: none;
+  }
+}

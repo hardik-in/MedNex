@@ -1,0 +1,158 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Admin</span>
+      <h1 class="page-title">Manage Time Slots</h1>
+    </div>
+    <button class="btn-primary" type="button"
+      (click)="router.navigate(['/admin/create-timeslot'])">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="12" y1="5" x2="12" y2="19"/>
+        <line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Create Slots
+    </button>
+  </div>
+
+  <div class="toolbar">
+    <div class="select-wrap">
+      <svg class="select-icon" width="15" height="15" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <!-- bind to publicId — not int id -->
+      <select class="toolbar-select" [(ngModel)]="selectedDoctorPublicId"
+        (change)="onDoctorChange()" aria-label="Select doctor">
+        <option value="">Select a doctor…</option>
+        @for (d of doctors; track d.publicId) {
+          <option [value]="d.publicId">
+            {{ d.fullName || (d.firstName + ' ' + d.lastName) }}{{ d.specialization ? ' — ' + d.specialization : '' }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <select class="filter-select" [(ngModel)]="statusFilter" (change)="applyFilter()"
+      [disabled]="slots.length === 0" aria-label="Filter by status">
+      <option value="">All Statuses</option>
+      @for (s of statusOptions; track s.value) {
+        <option [value]="s.value">{{ s.label }}</option>
+      }
+    </select>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <div class="loading-spinner"></div>
+      <span>Loading time slots…</span>
+    </div>
+  } @else if (!selectedDoctorPublicId) {
+    <div class="prompt-state">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span>Select a doctor to view their time slots</span>
+    </div>
+  } @else {
+    <div class="table-card">
+      @if (slots.length === 0) {
+        <div class="empty-state">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>No time slots found for this doctor</span>
+          <button class="btn-primary-sm" (click)="router.navigate(['/admin/create-timeslot'])">
+            Create Slots
+          </button>
+        </div>
+      } @else if (filteredSlots.length === 0) {
+        <div class="empty-state">
+          <span>No slots match the selected status</span>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of filteredSlots; track s.publicId) {
+                <tr>
+                  <td>{{ s.date | date: 'mediumDate' }}</td>
+                  <td class="text-muted mono">{{ s.startTime }}</td>
+                  <td class="text-muted mono">{{ s.endTime }}</td>
+                  <td class="text-muted">{{ s.durationMinutes }} min</td>
+                  <td>
+                    <span class="status-badge" [ngClass]="getStatusClass(s.status)">
+                      {{ getStatusLabel(s.status) }}
+                    </span>
+                  </td>
+                  <td class="action-cell">
+                    <!-- Disable delete on booked slots using enum constant -->
+                    <button class="btn-delete"
+                      (click)="confirmDelete(s)"
+                      [disabled]="s.status === SlotStatus.Booked"
+                      [title]="s.status === SlotStatus.Booked ? 'Cannot delete a booked slot' : 'Delete slot'"
+                      aria-label="Delete slot">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/><path d="M14 11v6"/>
+                        <path d="M9 6V4h6v2"/>
+                      </svg>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          Showing {{ filteredSlots.length }} of {{ slots.length }} slots
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<!-- Delete Confirmation Modal -->
+@if (slotToDelete) {
+  <div class="popup-overlay" (click)="cancelDelete()" role="dialog" aria-modal="true" aria-label="Confirm delete slot">
+    <div class="popup popup--confirm" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger" aria-hidden="true">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/>
+          <path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3 class="confirm-title">Delete Time Slot?</h3>
+      <p class="confirm-body">
+        This will permanently remove the slot<br/>
+        <strong>{{ slotToDelete.label }}</strong>
+      </p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancel</button>
+        <button type="button" class="btn-danger" (click)="deleteSlot()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+}

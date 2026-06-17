@@ -1,0 +1,31 @@
+# .dockerignore works like .gitignore but for Docker.
+# Files listed here are NOT sent to Docker when building the image.
+# This speeds up builds and prevents secrets from leaking into images.
+
+# Build output — not needed, Docker builds fresh
+**/bin/
+**/obj/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+
+# Git
+.git/
+.gitignore
+
+# Secrets — NEVER let these into a Docker image
+appsettings.Development.json
+appsettings.Production.json
+
+# Test project — not needed in the production image
+MedNex_Backend.Tests/
+
+# Docker files themselves
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Logs
+*.log

@@ -1,8 +1,16 @@
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
+# .NET
+bin/
+obj/
+*.user
+*.suo
 .vs/
+
+# SECRETS - never commit
+appsettings.Development.json
+appsettings.Production.json
+
+# Docker secrets - never commit
+.env
+
+# Logs
+*.log

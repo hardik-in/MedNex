@@ -1,0 +1,128 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <span class="eyebrow">Patient Portal</span>
+    <h1 class="page-title">My Appointments</h1>
+    <p class="page-sub">View and manage all your appointments.</p>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" width="15" height="15" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input class="search-input" type="text" placeholder="Search by doctor name…"
+        [(ngModel)]="search" (ngModelChange)="applyFilters()" aria-label="Search appointments"/>
+    </div>
+
+    <select class="filter-select" [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()"
+      aria-label="Filter by status">
+      <option value="">All Statuses</option>
+      <option value="1">Pending</option>
+      <option value="2">Confirmed</option>
+      <option value="3">Completed</option>
+      <option value="4">Cancelled</option>
+      <option value="5">No Show</option>
+    </select>
+
+    @if (search || statusFilter) {
+      <button class="clear-btn" (click)="clearFilters()">Clear</button>
+    }
+
+    <a routerLink="/patient/doctors" class="btn-book-new">+ Book Appointment</a>
+  </div>
+
+  @if (loading) {
+    <div class="loading-state" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Loading appointments…</span>
+    </div>
+  } @else if (error) {
+    <div class="empty-state" role="alert">{{ error }}</div>
+  } @else if (filtered.length === 0) {
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.5" width="32" height="32" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <p>No appointments found.</p>
+      <a routerLink="/patient/doctors" class="btn-book-new">Book your first appointment</a>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Specialization</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (appt of filtered; track appt.publicId) {
+            <tr>
+              <td class="td-name">Dr. {{ appt.doctorName }}</td>
+              <td>{{ appt.doctorSpecialization || '—' }}</td>
+              <td>{{ formatDate(appt.appointmentDate) }}</td>
+              <td class="td-time">{{ appt.startTime }} – {{ appt.endTime }}</td>
+              <td class="td-reason">{{ appt.reason || '—' }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatus(appt.status).css">
+                  {{ getStatus(appt.status).label }}
+                </span>
+              </td>
+              <td>
+                @if (canCancel(appt.status)) {
+                  <button class="cancel-btn" (click)="requestCancel(appt)" aria-label="Cancel appointment">
+                    Cancel
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Cancel popup -->
+@if (cancelTarget) {
+  <div class="overlay" (click)="closeCancel()" role="dialog" aria-modal="true"
+    [attr.aria-label]="'Cancel appointment with Dr. ' + cancelTarget.doctorName"></div>
+  <div class="popup">
+    <div class="popup-header">
+      <h3 class="popup-title">Cancel Appointment</h3>
+      <button class="popup-close" (click)="closeCancel()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          width="16" height="16" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <p class="popup-sub">
+      You are cancelling your appointment with <strong>Dr. {{ cancelTarget.doctorName }}</strong>.
+    </p>
+    <div class="popup-field">
+      <label class="field-label" for="cancel-reason">Reason for cancellation</label>
+      <textarea id="cancel-reason" class="reason-input"
+        placeholder="Please provide a reason…"
+        [(ngModel)]="cancelReason" rows="3"></textarea>
+    </div>
+    <div class="popup-actions">
+      <button class="btn-secondary" (click)="closeCancel()">Keep Appointment</button>
+      <button class="btn-danger" [disabled]="cancelling" (click)="confirmCancel()">
+        {{ cancelling ? 'Cancelling…' : 'Yes, Cancel' }}
+      </button>
+    </div>
+  </div>
+}

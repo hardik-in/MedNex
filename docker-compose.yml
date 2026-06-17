@@ -1,0 +1,56 @@
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: mednex_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mednex_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mednex_api
+    restart: unless-stopped
+    ports:
+      - "5129:5129"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5129
+      ConnectionStrings__DefaultConnection: "Server=db;Port=3306;Database=${DB_NAME};User=root;Password=${DB_ROOT_PASSWORD};"
+      JwtSettings__SecretKey: ${JWT_SECRET}
+      JwtSettings__Issuer: MedNex
+      JwtSettings__Audience: MedNexUsers
+      JwtSettings__ExpirationMinutes: 60
+      AllowedOrigins: ${ALLOWED_ORIGINS}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./MedNex_frontend
+      dockerfile: Dockerfile
+    container_name: mednex_frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  mednex_db_data:

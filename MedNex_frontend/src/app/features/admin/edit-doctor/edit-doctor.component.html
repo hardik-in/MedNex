@@ -1,0 +1,195 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Doctors</span>
+      <h1 class="page-title">Edit Doctor</h1>
+    </div>
+    <button class="btn-back" type="button" (click)="router.navigate(['/admin/doctors'])">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Doctors
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="requestConfirm()" class="form-card" novalidate>
+
+    <div class="form-section">
+      <p class="section-label">Personal Information</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Reference ID</label>
+          <input type="text" formControlName="referenceId" class="disabled-field"/>
+        </div>
+        <div class="input-group">
+          <label>First Name</label>
+          <input type="text" formControlName="firstName" class="disabled-field"/>
+        </div>
+        <div class="input-group">
+          <label>Last Name</label>
+          <input type="text" formControlName="lastName" class="disabled-field"/>
+        </div>
+        <div class="input-group">
+          <label for="ed-email">Email</label>
+          <input id="ed-email" type="email" formControlName="email" placeholder="doctor@example.com"/>
+        </div>
+        <div class="input-group">
+          <label for="ed-phone">Phone Number</label>
+          <input id="ed-phone" type="text" formControlName="phoneNumber" placeholder="+91XXXXXXXXXX"/>
+        </div>
+        <div class="input-group full-width">
+          <label for="ed-address">Address</label>
+          <input id="ed-address" type="text" formControlName="address" placeholder="Street, City, State"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <p class="section-label">Professional Information</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="ed-spec">Specialization</label>
+          <input id="ed-spec" type="text" formControlName="specialization" placeholder="e.g. Cardiologist"/>
+        </div>
+        <div class="input-group">
+          <label for="ed-career">Career Start Date</label>
+          <input id="ed-career" type="date" formControlName="careerStartDate"/>
+        </div>
+        <div class="input-group">
+          <label for="ed-fee">Consultation Fee (₹)</label>
+          <input id="ed-fee" type="number" formControlName="consultationFee" placeholder="0.00" min="0"/>
+        </div>
+        <div class="input-group full-width">
+          <label for="ed-qual">Qualifications</label>
+          <input id="ed-qual" type="text" formControlName="qualifications" placeholder="e.g. MBBS, MD, MS"/>
+        </div>
+        <div class="input-group full-width">
+          <label for="ed-bio">Bio</label>
+          <textarea id="ed-bio" formControlName="bio" placeholder="Brief professional biography…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <p class="section-label">Admin Assignment</p>
+      <div class="admin-assignment-row">
+        <div class="admin-current">
+          @if (selectedAdmin) {
+            <div class="admin-avatar" aria-hidden="true">
+              {{ selectedAdmin.firstName[0] }}{{ selectedAdmin.lastName[0] }}
+            </div>
+          } @else {
+            <div class="admin-avatar admin-avatar--empty" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+          }
+          <div class="admin-info">
+            @if (selectedAdmin) {
+              <span class="admin-name">{{ selectedAdmin.firstName }} {{ selectedAdmin.lastName }}</span>
+              <span class="admin-id">{{ selectedAdmin.employeeId }}</span>
+            } @else {
+              <span class="admin-name admin-name--empty">No admin assigned</span>
+            }
+          </div>
+        </div>
+        <button type="button" class="btn-change-admin" (click)="openAdminPopup()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Change Admin
+        </button>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="router.navigate(['/admin/doctors'])">Cancel</button>
+      <button type="submit" class="btn-submit">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+<!-- Confirm Save Modal -->
+@if (showConfirmPopup) {
+  <div class="popup-overlay" (click)="cancelConfirm()" role="dialog" aria-modal="true" aria-label="Confirm save changes">
+    <div class="popup popup--confirm" (click)="$event.stopPropagation()">
+      <div class="confirm-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </div>
+      <h3 class="confirm-title">Save Changes?</h3>
+      <p class="confirm-body">You're about to update this doctor's profile. This action will overwrite the current information.</p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">Cancel</button>
+        <button type="button" class="btn-submit" (click)="confirmSubmit()">Yes, Save Changes</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Admin Select Modal -->
+@if (showAdminPopup) {
+  <div class="popup-overlay" (click)="closeAdminPopup()" role="dialog" aria-modal="true" aria-label="Select admin">
+    <div class="popup" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <h3 class="popup-title">Select Admin</h3>
+        <button type="button" class="popup-close" (click)="closeAdminPopup()" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="popup-search-wrap">
+        <svg class="popup-search-icon" width="15" height="15" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="popup-search" placeholder="Search by name…"
+          [(ngModel)]="adminSearch" (input)="onAdminSearch()" aria-label="Search admins"/>
+      </div>
+      <div class="popup-list" role="listbox" aria-label="Admin options">
+        @for (admin of filteredAdmins; track admin.publicId) {
+          <div class="popup-item" role="option"
+            [class.popup-item--selected]="selectedAdmin?.publicId === admin.publicId"
+            (click)="selectAdmin(admin)"
+            [attr.aria-selected]="selectedAdmin?.publicId === admin.publicId">
+            <div class="popup-item-avatar" aria-hidden="true">
+              {{ admin.firstName[0] }}{{ admin.lastName[0] }}
+            </div>
+            <div class="popup-item-info">
+              <span class="popup-item-name">{{ admin.firstName }} {{ admin.lastName }}</span>
+              <span class="popup-item-id">{{ admin.employeeId }}</span>
+            </div>
+            @if (selectedAdmin?.publicId === admin.publicId) {
+              <svg class="popup-item-check" width="16" height="16" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            }
+          </div>
+        }
+        @if (filteredAdmins.length === 0) {
+          <div class="popup-empty">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>No admins found</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

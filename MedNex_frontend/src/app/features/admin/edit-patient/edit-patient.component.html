@@ -1,0 +1,133 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <span class="page-eyebrow">Patients</span>
+      <h1 class="page-title">Edit Patient</h1>
+    </div>
+    <!-- publicId stored on component — not from form control -->
+    <button class="btn-back" type="button"
+      (click)="router.navigate(['/admin/patients', publicId])">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Back to Profile
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="requestConfirm()" class="form-card" novalidate>
+
+    <div class="form-section">
+      <p class="section-label">System Info</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Reference ID</label>
+          <input type="text" formControlName="referenceId" class="disabled-field"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <p class="section-label">Personal Information</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="ep-first">First Name</label>
+          <input id="ep-first" type="text" formControlName="firstName" placeholder="First name"/>
+        </div>
+        <div class="input-group">
+          <label for="ep-last">Last Name</label>
+          <input id="ep-last" type="text" formControlName="lastName" placeholder="Last name"/>
+        </div>
+        <div class="input-group">
+          <label for="ep-email">Email</label>
+          <input id="ep-email" type="email" formControlName="email" placeholder="patient@example.com"/>
+        </div>
+        <div class="input-group">
+          <label for="ep-phone">Phone Number</label>
+          <input id="ep-phone" type="text" formControlName="phoneNumber" placeholder="+91XXXXXXXXXX"/>
+        </div>
+        <div class="input-group">
+          <label for="ep-dob">Date of Birth</label>
+          <input id="ep-dob" type="date" formControlName="dateOfBirth"/>
+        </div>
+        <div class="input-group">
+          <label for="ep-gender">Gender</label>
+          <select id="ep-gender" formControlName="gender">
+            <option value="">Select gender</option>
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+            <option value="2">Other</option>
+          </select>
+        </div>
+        <div class="input-group full-width">
+          <label for="ep-address">Address</label>
+          <input id="ep-address" type="text" formControlName="address" placeholder="Street, City, State"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <p class="section-label">Medical Information</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="ep-blood">Blood Group</label>
+          <select id="ep-blood" formControlName="bloodGroup">
+            <option value="">Select blood group</option>
+            @for (bg of ['A+','A-','B+','B-','AB+','AB-','O+','O-']; track bg) {
+              <option [value]="bg">{{ bg }}</option>
+            }
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="ep-allerg">Allergies</label>
+          <input id="ep-allerg" type="text" formControlName="allergies" placeholder="e.g. Penicillin, Peanuts"/>
+        </div>
+        <div class="input-group full-width">
+          <label for="ep-history">Medical History</label>
+          <textarea id="ep-history" formControlName="medicalHistory"
+            placeholder="Relevant past conditions, surgeries, chronic illnesses…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <p class="section-label">Emergency Contact</p>
+      <div class="form-grid">
+        <div class="input-group">
+          <label for="ep-ecname">Contact Name</label>
+          <input id="ep-ecname" type="text" formControlName="emergencyContactName" placeholder="Full name"/>
+        </div>
+        <div class="input-group">
+          <label for="ep-ecphone">Contact Phone</label>
+          <input id="ep-ecphone" type="text" formControlName="emergencyContactPhone" placeholder="+91XXXXXXXXXX"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-cancel"
+        (click)="router.navigate(['/admin/patients', publicId])">Cancel</button>
+      <button type="submit" class="btn-submit">Save Changes</button>
+    </div>
+  </form>
+</div>
+
+@if (showConfirmPopup) {
+  <div class="popup-overlay" (click)="cancelConfirm()" role="dialog" aria-modal="true" aria-label="Confirm save changes">
+    <div class="popup popup--confirm" (click)="$event.stopPropagation()">
+      <div class="confirm-icon" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </div>
+      <h3 class="confirm-title">Save Changes?</h3>
+      <p class="confirm-body">You're about to update this patient's profile. This will overwrite the current information.</p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-cancel" (click)="cancelConfirm()">Cancel</button>
+        <button type="button" class="btn-submit" (click)="confirmSubmit()">Yes, Save Changes</button>
+      </div>
+    </div>
+  </div>
+}

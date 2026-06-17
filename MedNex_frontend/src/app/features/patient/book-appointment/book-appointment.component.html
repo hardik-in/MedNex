@@ -1,0 +1,155 @@
+<div class="page-wrapper">
+  @if (loadingDoctor) {
+    <div class="loading-state" aria-live="polite">
+      <div class="spinner"></div>
+      <span>Loading doctor details…</span>
+    </div>
+  } @else if (doctor) {
+    <a routerLink="/patient/doctors" class="back-link">← Back to Doctors</a>
+
+    <div class="page-header">
+      <span class="eyebrow">Book Appointment</span>
+      <h1 class="page-title">Dr. {{ d.firstName }} {{ d.lastName }}</h1>
+      <p class="page-sub">{{ d.specialization || "—" }}</p>
+    </div>
+
+    <div class="layout-grid">
+      <!-- Doctor Card -->
+      <div class="doctor-card">
+        <div class="doc-avatar" aria-hidden="true">
+          {{ d.firstName.charAt(0).toUpperCase() }}
+        </div>
+        <div class="doc-details">
+          <div class="detail-row">
+            <span class="detail-label">Experience</span>
+            <span class="detail-val">{{
+              getExperienceYears(d.careerStartDate)
+            }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Consultation Fee</span>
+            <span class="detail-val">₹{{ d.consultationFee ?? "—" }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Qualifications</span>
+            <span class="detail-val">{{ d.qualifications || "—" }}</span>
+          </div>
+          @if (d.bio) {
+            <div class="detail-row">
+              <span class="detail-label">About</span>
+              <span class="detail-val bio">{{ d.bio }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Booking Panel -->
+      <div class="booking-panel">
+        <!-- Step 1: Date -->
+        <div class="step">
+          <div class="step-header">
+            <span class="step-number">1</span>
+            <span class="step-title">Select a Date</span>
+          </div>
+          <input
+            class="date-input"
+            type="date"
+            [(ngModel)]="selectedDate"
+            [min]="today"
+            (ngModelChange)="onDateChange()"
+            aria-label="Select appointment date"
+          />
+        </div>
+
+        <!-- Step 2: Slot -->
+        @if (selectedDate) {
+          <div class="step">
+            <div class="step-header">
+              <span class="step-number">2</span>
+              <span class="step-title">Choose a Time Slot</span>
+            </div>
+
+            @if (loadingSlots) {
+              <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Loading slots…</span>
+              </div>
+            } @else if (slots.length === 0) {
+              <div class="no-slots">
+                No available slots for this date. Try another day.
+              </div>
+            } @else {
+              <div
+                class="slots-grid"
+                role="group"
+                aria-label="Available time slots"
+              >
+                @for (slot of slots; track slot.publicId) {
+                  <button
+                    class="slot-btn"
+                    [class.selected]="selectedSlotId === slot.publicId"
+                    (click)="selectSlot(slot.publicId)"
+                    [attr.aria-pressed]="selectedSlotId === slot.publicId"
+                  >
+                    {{ slot.startTime }} – {{ slot.endTime }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Step 3: Reason -->
+        @if (selectedSlotId) {
+          <div class="step">
+            <div class="step-header">
+              <span class="step-number">3</span>
+              <span class="step-title">Reason for Visit</span>
+            </div>
+            <textarea
+              class="reason-input"
+              placeholder="Briefly describe your symptoms or reason for visit…"
+              [(ngModel)]="reason"
+              rows="3"
+              aria-label="Reason for visit"
+            ></textarea>
+          </div>
+        }
+
+        <!-- Summary -->
+        @if (selectedSlot && reason.trim()) {
+          <div class="summary-bar">
+            <div class="summary-row">
+              <span class="summary-label">Date</span>
+              <span class="summary-val">{{ selectedDate }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Time</span>
+              <span class="summary-val"
+                >{{ selectedSlot.startTime }} – {{ selectedSlot.endTime }}</span
+              >
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Reason</span>
+              <span class="summary-val">{{ reason }}</span>
+            </div>
+          </div>
+        }
+
+        <button
+          class="btn-book"
+          [disabled]="!selectedSlotId || !reason.trim() || booking"
+          (click)="book()"
+        >
+          @if (!booking) {
+            Confirm Booking
+          } @else {
+            <span class="btn-loading">
+              <span class="spinner-sm" aria-hidden="true"></span> Booking…
+            </span>
+          }
+        </button>
+      </div>
+    </div>
+  }
+</div>
